@@ -6,6 +6,7 @@
     <title>Emmanuel Bernal | Portfolio</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- Theme check before page render to prevent FOUC (Flash of Unstyled Content) -->
     <script>
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -17,49 +18,47 @@
     </button>
 
     <header>
-        <div class="container">
-            <h1>Emmanuel John P. Bernal</h1>
-            <p class="subtitle">3rd-Year BSCS Student @ DMMMSU | System Analyst</p>
+        <div class="container header-content">
+            <div class="header-text">
+                <h1>Emmanuel John P. Bernal</h1>
+                <p class="subtitle">4th-Year BSCS Student @ DMMMSU</p>
+            </div>
+            <img src="aPfp.png" alt="Emmanuel John Bernal" class="profile-photo">
         </div>
     </header>
 
     <main class="container">
         <section id="about">
             <h2>About Me</h2>
-            <p>Based in Agoo, La Union, I am a Computer Science student seeking local OJT opportunities. As a Level 2 beginner developer, I specialize in system analysis, UI/UX blueprinting, and utilizing modern AI-assisted workflows ("vibe coding") through tools like Cursor and GitHub Copilot to rapidly prototype and iterate on software solutions.</p>
+            <p>I'm a 4th-year Computer Science student based in Tubao, La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
         </section>
 
         <section id="projects">
-            <h2>Featured Architecture & Development</h2>
+            <h2>My Projects</h2>
             <div class="project-grid">
                 <div class="project-card">
-                    <h3>eTourMo</h3>
-                    <p class="tag">Digital Tourism Portal</p>
-                    <p>Designed a centralized platform for sustainable tourism in La Union. Mapped user flows and created data architectures to connect travelers with verified eco-friendly businesses.</p>
-                </div>
-                <div class="project-card">
-                    <h3>PickStop</h3>
-                    <p class="tag">Mobile Reservation System</p>
-                    <p>Served as Lead System Analyst and UI/UX Designer. Drafted comprehensive use-case, activity, and component diagrams tailored for local food vendors and bakeries.</p>
+                    <h3>Digital Portfolio</h3>
+                    <p class="tag">Web Programming Course</p>
+                    <p>A personal website I built for my Web Programming class. It uses basic HTML, CSS, and JavaScript to share a bit about myself and display the coding projects I've been working on.</p>
                 </div>
                 <div class="project-card">
                     <h3>Debug Defender</h3>
                     <p class="tag">Real-Time Strategy (RTS) Game</p>
-                    <p>Built and refined an RTS game up to version 1.6.1 using AI-assisted iterative development, focusing on structured gameplay mechanics and clean UI implementation.</p>
+                    <p>A game project I collaborated on using AI tools to help with the coding process. We worked on adding standard gameplay features and keeping the interface clean, getting it up to version 1.6.1.</p>
                 </div>
             </div>
         </section>
 
         <section id="skills">
-            <h2>Technical Core</h2>
+            <h2>What I Do</h2>
             <div class="skills-grid">
                 <div class="skill-category">
-                    <h3>Analysis & Design</h3>
-                    <p>Use Case Diagramming, Activity & Component Modeling, UI/UX Wireframing, System Documentation</p>
+                    <h3>Planning & Design</h3>
+                    <p>Creating basic wireframes, making simple diagrams, and planning out how an app should work before coding it.</p>
                 </div>
                 <div class="skill-category">
-                    <h3>Development Workflow</h3>
-                    <p>AI-Driven Development (Cursor, Copilot), Git Version Control, Prompt Engineering, Iterative Prototyping</p>
+                    <h3>Development Tools</h3>
+                    <p>Using AI assistants (Cursor, Claude, Gemini, GitHub Copilot) to help write code, and Git/GitHub to save my progress and host my work.</p>
                 </div>
             </div>
         </section>

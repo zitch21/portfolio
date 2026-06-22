@@ -1,19 +1,20 @@
 # Emmanuel John Bernal | Personal Profile & Portfolio
 
-An interactive, single-page profile documenting my system analysis focus, architectural project histories, and technical proficiencies as a 3rd-Year BSCS student at DMMMSU.
+A simple, interactive personal website built for my Web Programming course. It shares a bit about who I am as a 4th-Year BSCS student at DMMMSU in Tubao, La Union, and displays the coding projects I've been working on.
 
 ## 🛠️ Tech Stack & Features
-* **Structure/Logic:** Semantic HTML5 & Vanilla JavaScript
-* **Styling:** Modern CSS3 with Custom Media Properties (Variables) and FOUC prevention.
-* **Interactive Switcher:** Seamless transition between dynamic palettes using `localStorage`:
-    * *Light Mode:* Minimalist Off-White & Technical Blue
-    * *Dark Mode:* Low-light Deep Charcoal & Technical Golden-Yellow
-* **Micro-interactions:** Hardware-accelerated hover states optimized for performance.
+* **Structure & Logic:** Standard HTML5 and Vanilla JavaScript.
+* **Styling:** External CSS3 using custom variables for theme management. 
+* **Interactive Theme Switcher:** A dark/light mode toggle button that remembers your preference using the browser's `localStorage`.
+    * *Light Mode:* Off-White & Tech Blue
+    * *Dark Mode:* Black & Golden Yellow
+* **Responsive Layout:** Automatically adjusts for mobile screens and includes a styled profile photo.
 
 ## 🤖 AI Collaboration Workflow
-In fulfillment of the assignment guidelines, this project was developed using an AI-assisted pipeline ("Vibe Coding"). 
-* **Wireframing:** Structural mockups generated via natural language specifications.
-* **State Management & Debugging:** The JavaScript toggle mechanic, persistent memory configuration, and CSS transition optimizations were iteratively scaffolded, tested, and refined through conversational code adjustments.
+To meet the assignment guidelines, this project was developed by experimenting with AI tools like Cursor and GitHub Copilot. 
+* **Drafting:** Used natural language prompts to quickly set up the basic HTML structure and CSS layout.
+* **Troubleshooting:** Worked with the AI to fix minor bugs, like moving inline styles to the external CSS file and fixing the page flashing when loading dark mode.
+* **Learning:** Used the AI as a guide to understand how things like `localStorage` and responsive flexbox layouts actually work in practice.
 
 ## 📈 Version Control
-This repository strictly adheres to standard Git versioning patterns, utilizing semantic commit declarations (`feat:`, `fix:`, `docs:`) to document clear incremental updates for grading evaluation.
+This project uses Git and GitHub to track progress. I used semantic commit messages (like `feat:`, `fix:`, and `refactor:`) to keep my update history organized for grading.
