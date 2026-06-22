@@ -6,6 +6,7 @@
     <title>Emmanuel John Bernal | Portfolio</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- Theme check before page render to prevent FOUC (Flash of Unstyled Content) -->
     <script>
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -91,7 +92,7 @@
 
         // --- Scroll Reveal Animation ---
         const observerOptions = {
-            threshold: 0.1, // Triggers when 10% of the element is visible
+            threshold: 0.1,
             rootMargin: "0px 0px -50px 0px"
         };
 
@@ -99,7 +100,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Only animate once
+                    observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
