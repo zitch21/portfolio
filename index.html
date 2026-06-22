@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emmanuel Bernal | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</head>
+<body>
+    <button id="theme-toggle" aria-label="Toggle dark mode" class="theme-btn">
+        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    </button>
+
+    <header>
+        <div class="container">
+            <h1>Emmanuel John P. Bernal</h1>
+            <p class="subtitle">3rd-Year BSCS Student @ DMMMSU | System Analyst</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="about">
+            <h2>About Me</h2>
+            <p>Based in Agoo, La Union, I am a Computer Science student seeking local OJT opportunities. As a Level 2 beginner developer, I specialize in system analysis, UI/UX blueprinting, and utilizing modern AI-assisted workflows ("vibe coding") through tools like Cursor and GitHub Copilot to rapidly prototype and iterate on software solutions.</p>
+        </section>
+
+        <section id="projects">
+            <h2>Featured Architecture & Development</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>eTourMo</h3>
+                    <p class="tag">Digital Tourism Portal</p>
+                    <p>Designed a centralized platform for sustainable tourism in La Union. Mapped user flows and created data architectures to connect travelers with verified eco-friendly businesses.</p>
+                </div>
+                <div class="project-card">
+                    <h3>PickStop</h3>
+                    <p class="tag">Mobile Reservation System</p>
+                    <p>Served as Lead System Analyst and UI/UX Designer. Drafted comprehensive use-case, activity, and component diagrams tailored for local food vendors and bakeries.</p>
+                </div>
+                <div class="project-card">
+                    <h3>Debug Defender</h3>
+                    <p class="tag">Real-Time Strategy (RTS) Game</p>
+                    <p>Built and refined an RTS game up to version 1.6.1 using AI-assisted iterative development, focusing on structured gameplay mechanics and clean UI implementation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Technical Core</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Analysis & Design</h3>
+                    <p>Use Case Diagramming, Activity & Component Modeling, UI/UX Wireframing, System Documentation</p>
+                </div>
+                <div class="skill-category">
+                    <h3>Development Workflow</h3>
+                    <p>AI-Driven Development (Cursor, Copilot), Git Version Control, Prompt Engineering, Iterative Prototyping</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 | Built with Git, HTML/CSS, & GitHub Pages</p>
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
+        
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        updateIcon(currentTheme);
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.22" x2="5.64" y2="17.78"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            } else {
+                icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            }
+        }
+    </script>
+</body>
+</html>

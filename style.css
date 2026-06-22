@@ -1,0 +1,162 @@
+/* Base fallback variables (Light Mode: Off-White & Tech-Blue) */
+:root {
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+    --accent-color: #0056b3;
+    --card-bg: #ffffff;
+    --border-color: #e9ecef;
+    --tag-color: #495057;
+}
+
+/* Dark Mode Overrides (Black & Golden-Yellow) */
+:root[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --accent-color: #ffcc00;
+    --card-bg: #1e1e1e;
+    --border-color: #2d2d2d;
+    --tag-color: #a0a0a0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Apply transitions only to structural elements for performance */
+body, .project-card, .skill-category, header, footer, .theme-btn {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 5rem 0 2.5rem 0;
+}
+
+header h1 {
+    font-size: 2.6rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: var(--accent-color);
+    font-weight: 500;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+section {
+    margin: 3.5rem 0;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 650px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.project-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    cursor: default;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-color);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.project-card h3 {
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.tag {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+.skill-category {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
+    border-radius: 8px;
+}
+
+.skill-category h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.theme-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.theme-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    font-size: 0.85rem;
+    color: var(--tag-color);
+    border-top: 1px solid var(--border-color);
+    margin-top: 4rem;
+}
