@@ -6,7 +6,6 @@
     <title>Emmanuel John Bernal | Portfolio</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Theme check before page render to prevent FOUC (Flash of Unstyled Content) -->
     <script>
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -38,10 +37,30 @@
                     <p class="tag">Web Programming Course</p>
                     <p>A personal website I built for my Web Programming class. It uses basic HTML, CSS, and JavaScript to share a bit about myself and display the coding projects I've been working on.</p>
                 </div>
+                
                 <div class="project-card">
-                    <h3>Debug Defender</h3>
-                    <p class="tag">Real-Time Strategy (RTS) Game</p>
-                    <p>A game project I collaborated on using AI tools to help with the coding process. We worked on adding standard gameplay features and keeping the interface clean, getting it up to version 1.6.1.</p>
+                    <h3>Debug Defender: Mini</h3>
+                    <p class="tag">Interactive JS Game</p>
+                    <p style="font-size: 0.85rem; margin-bottom: 10px;">Squash as many bugs as you can in 15 seconds!</p>
+                    
+                    <div id="game-container" class="game-area">
+                        <div id="start-screen">
+                            <button id="start-game-btn" class="game-btn">Start Debugging</button>
+                        </div>
+                        
+                        <div id="play-screen" style="display: none;">
+                            <div class="game-header">
+                                <span>Score: <span id="score">0</span></span>
+                                <span>Time: <span id="time">15</span>s</span>
+                            </div>
+                            <div id="bug" class="bug">🐛</div>
+                        </div>
+                        
+                        <div id="end-screen" style="display: none;">
+                            <p style="font-weight: 600; margin-bottom: 10px;">Bugs Squashed: <span id="final-score">0</span></p>
+                            <button id="restart-game-btn" class="game-btn">Play Again</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -108,6 +127,74 @@
         document.querySelectorAll('.fade-section').forEach(section => {
             observer.observe(section);
         });
+
+        // --- Mini-Game Logic ---
+        const startBtn = document.getElementById('start-game-btn');
+        const restartBtn = document.getElementById('restart-game-btn');
+        const startScreen = document.getElementById('start-screen');
+        const playScreen = document.getElementById('play-screen');
+        const endScreen = document.getElementById('end-screen');
+        const bug = document.getElementById('bug');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const gameArea = document.getElementById('game-container');
+
+        let score = 0;
+        let timeLeft = 15;
+        let gameInterval;
+        let isPlaying = false;
+
+        function startGame() {
+            score = 0;
+            timeLeft = 15;
+            isPlaying = true;
+            scoreDisplay.textContent = score;
+            timeDisplay.textContent = timeLeft;
+
+            startScreen.style.display = 'none';
+            endScreen.style.display = 'none';
+            playScreen.style.display = 'block';
+
+            moveBug();
+
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            playScreen.style.display = 'none';
+            endScreen.style.display = 'flex';
+            finalScoreDisplay.textContent = score;
+        }
+
+        function moveBug() {
+            // Calculate random positions within the game container bounds
+            const maxX = gameArea.clientWidth - 30; // 30px is roughly the bug's width
+            const maxY = gameArea.clientHeight - 40; // Subtract header height
+            const randomX = Math.floor(Math.random() * Math.max(0, maxX));
+            const randomY = Math.floor(Math.random() * Math.max(0, maxY)) + 30; // Push down past header
+            
+            bug.style.left = `${randomX}px`;
+            bug.style.top = `${randomY}px`;
+        }
+
+        bug.addEventListener('mousedown', () => {
+            if (!isPlaying) return;
+            score++;
+            scoreDisplay.textContent = score;
+            moveBug();
+        });
+
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
     </script>
 </body>
 </html>
