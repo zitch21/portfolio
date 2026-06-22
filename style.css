@@ -49,6 +49,43 @@ header {
     padding: 5rem 0 2.5rem 0;
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Code-based element handling rendering/transformation requirements cleanly */
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.5s ease;
+}
+
+/* Rotation transformation requirement triggered via interactive micro-interaction */
+.avatar-circle:hover {
+    transform: rotate(360deg);
+}
+
+@media (max-width: 600px) {
+    .header-content {
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+}
+
 header h1 {
     font-size: 2.6rem;
     font-weight: 700;
