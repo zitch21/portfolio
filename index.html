@@ -38,27 +38,35 @@
                     <p>A personal website I built for my Web Programming class. It uses basic HTML, CSS, and JavaScript to share a bit about myself and display the coding projects I've been working on.</p>
                 </div>
                 
-                <div class="project-card">
-                    <h3>Debug Defender: Mini</h3>
+                <div class="project-card" style="display: flex; flex-direction: column;">
+                    <h3>Debug Defender: Pro</h3>
                     <p class="tag">Interactive JS Game</p>
-                    <p style="font-size: 0.85rem; margin-bottom: 10px;">Squash as many bugs as you can in 15 seconds!</p>
+                    <p style="font-size: 0.85rem; margin-bottom: 10px;">The bugs get faster the more you squash. 15 seconds. Go!</p>
                     
                     <div id="game-container" class="game-area">
-                        <div id="start-screen">
-                            <button id="start-game-btn" class="game-btn">Start Debugging</button>
+                        <div id="start-screen" class="screen-flex">
+                            <button id="start-game-btn" class="game-btn" style="margin-bottom: 10px;">Start Debugging</button>
+                            <div class="leaderboard-container">
+                                <h4>Top Debuggers</h4>
+                                <ol id="start-leaderboard" class="leaderboard-list"></ol>
+                            </div>
                         </div>
                         
                         <div id="play-screen" style="display: none;">
                             <div class="game-header">
-                                <span>Score: <span id="score">0</span></span>
+                                <span>Score: <span id="score">0</span> <span style="font-size:0.7rem; opacity:0.7">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
                             </div>
-                            <div id="bug" class="bug">🐛</div>
+                            <div id="bug" class="bug" draggable="false">🐛</div>
                         </div>
                         
-                        <div id="end-screen" style="display: none;">
+                        <div id="end-screen" class="screen-flex" style="display: none;">
+                            <h3 id="end-message" style="margin-bottom: 5px; color: var(--accent-color);">Time's Up!</h3>
                             <p style="font-weight: 600; margin-bottom: 10px;">Bugs Squashed: <span id="final-score">0</span></p>
-                            <button id="restart-game-btn" class="game-btn">Play Again</button>
+                            
+                            <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off">
+                            
+                            <button id="restart-game-btn" class="game-btn">Save & Play Again</button>
                         </div>
                     </div>
                 </div>
@@ -88,14 +96,12 @@
         // --- Theme Toggle Logic ---
         const toggleBtn = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
-        
         const currentTheme = document.documentElement.getAttribute('data-theme');
         updateIcon(currentTheme);
 
         toggleBtn.addEventListener('click', () => {
             let theme = document.documentElement.getAttribute('data-theme');
             let newTheme = theme === 'light' ? 'dark' : 'light';
-            
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateIcon(newTheme);
@@ -110,11 +116,6 @@
         }
 
         // --- Scroll Reveal Animation ---
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -122,11 +123,9 @@
                     observer.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-        document.querySelectorAll('.fade-section').forEach(section => {
-            observer.observe(section);
-        });
+        document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
         // --- Mini-Game Logic ---
         const startBtn = document.getElementById('start-game-btn');
@@ -137,20 +136,70 @@
         const bug = document.getElementById('bug');
         const scoreDisplay = document.getElementById('score');
         const timeDisplay = document.getElementById('time');
+        const currentBestDisplay = document.getElementById('current-best');
         const finalScoreDisplay = document.getElementById('final-score');
+        const endMessage = document.getElementById('end-message');
         const gameArea = document.getElementById('game-container');
+        const startLeaderboard = document.getElementById('start-leaderboard');
+        const nameInput = document.getElementById('player-name');
 
         let score = 0;
         let timeLeft = 15;
         let gameInterval;
+        let bugTimeout; 
         let isPlaying = false;
+        let isSaving = false; // BUG FIX: State lock variable stops duplicate submission spikes
+        
+        // Load high scores safely
+        let rawScores = JSON.parse(localStorage.getItem('debugScores')) || [];
+        let highScores = rawScores.map(item => {
+            if (typeof item === 'number') {
+                return { name: "Anon", score: item };
+            }
+            return item;
+        });
+
+        function updateLeaderboardUI() {
+            startLeaderboard.innerHTML = '';
+            if (highScores.length === 0) {
+                const emptyLi = document.createElement('li');
+                emptyLi.textContent = 'No scores yet!';
+                startLeaderboard.appendChild(emptyLi);
+                currentBestDisplay.textContent = '0';
+                return;
+            }
+            
+            currentBestDisplay.textContent = highScores[0].score;
+            highScores.forEach(entry => {
+                const li = document.createElement('li');
+                // BUG FIX: Secure textContent explicitly neutralizes script injection exploits
+                li.textContent = `${entry.name}: ${entry.score}`;
+                startLeaderboard.appendChild(li);
+            });
+        }
+
+        function saveScore(newScore, playerName) {
+            if (newScore === 0) return;
+            const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
+            highScores.push({ name: finalName, score: newScore });
+            highScores.sort((a, b) => b.score - a.score);
+            highScores = highScores.slice(0, 5); 
+            localStorage.setItem('debugScores', JSON.stringify(highScores));
+            
+            updateLeaderboardUI();
+        }
 
         function startGame() {
+            clearInterval(gameInterval); 
+            clearTimeout(bugTimeout);
+            
             score = 0;
             timeLeft = 15;
             isPlaying = true;
+            isSaving = false; // Reset lock switch
             scoreDisplay.textContent = score;
             timeDisplay.textContent = timeLeft;
+            nameInput.value = '';
 
             startScreen.style.display = 'none';
             endScreen.style.display = 'none';
@@ -170,31 +219,66 @@
         function endGame() {
             isPlaying = false;
             clearInterval(gameInterval);
+            clearTimeout(bugTimeout); 
+            
             playScreen.style.display = 'none';
             endScreen.style.display = 'flex';
             finalScoreDisplay.textContent = score;
+
+            if (score > 0) {
+                nameInput.style.display = 'block';
+                if (highScores.length > 0 && score > highScores[0].score) {
+                    endMessage.textContent = "🏆 New High Score!";
+                } else {
+                    endMessage.textContent = "Time's Up!";
+                }
+            } else {
+                nameInput.style.display = 'none';
+                endMessage.textContent = "Try again!";
+            }
         }
 
         function moveBug() {
-            // Calculate random positions within the game container bounds
-            const maxX = gameArea.clientWidth - 30; // 30px is roughly the bug's width
-            const maxY = gameArea.clientHeight - 40; // Subtract header height
-            const randomX = Math.floor(Math.random() * Math.max(0, maxX));
-            const randomY = Math.floor(Math.random() * Math.max(0, maxY)) + 30; // Push down past header
+            clearTimeout(bugTimeout);
+            if (!isPlaying) return;
+
+            const maxX = gameArea.clientWidth - 35; 
+            const maxY = gameArea.clientHeight - 60; 
+            const randomX = Math.floor(Math.random() * Math.max(0, maxX)) + 5; 
+            const randomY = Math.floor(Math.random() * Math.max(0, maxY)) + 35; 
             
             bug.style.left = `${randomX}px`;
             bug.style.top = `${randomY}px`;
+
+            let speed = Math.max(400, 1000 - (score * 40)); 
+            bugTimeout = setTimeout(moveBug, speed);
         }
 
-        bug.addEventListener('mousedown', () => {
+        bug.addEventListener('pointerdown', (e) => {
             if (!isPlaying) return;
+            e.preventDefault(); 
             score++;
             scoreDisplay.textContent = score;
-            moveBug();
+            
+            bug.style.transform = 'scale(0.3)';
+            setTimeout(() => bug.style.transform = 'scale(1)', 100);
+
+            moveBug(); 
         });
 
+        updateLeaderboardUI();
         startBtn.addEventListener('click', startGame);
-        restartBtn.addEventListener('click', startGame);
+        
+        restartBtn.addEventListener('click', () => {
+            // BUG FIX: Block concurrent save invocation cycles
+            if (isSaving) return;
+            isSaving = true;
+
+            if (score > 0) {
+                saveScore(score, nameInput.value);
+            }
+            startGame();
+        });
     </script>
 </body>
 </html>

@@ -26,7 +26,6 @@
     padding: 0;
 }
 
-/* Apply base transitions to structural layout elements */
 body, .skill-category, header, footer, .theme-btn {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -168,7 +167,6 @@ footer {
    PERFORMANCE-OPTIMIZED PRESENTATION ELEMENTS
    ========================================= */
 
-/* 1. Snappy, GPU-Accelerated Scroll Fade-In */
 .fade-section {
     opacity: 0;
     transform: translateY(30px);
@@ -181,7 +179,6 @@ footer {
     transform: translateY(0);
 }
 
-/* 2. Sleek, Slowed-Down "Chromatic Aberration" Tech Effect */
 #my-name {
     cursor: crosshair;
     position: relative;
@@ -207,19 +204,13 @@ footer {
     pointer-events: none;
 }
 
-#my-name::before {
-    color: #00fff9;
-}
-
-#my-name::after {
-    color: #ff00c1;
-}
+#my-name::before { color: #00fff9; }
+#my-name::after { color: #ff00c1; }
 
 #my-name:hover::before {
     opacity: 0.8;
     transform: translate(-3px, -2px);
 }
-
 #my-name:hover::after {
     opacity: 0.8;
     transform: translate(3px, 2px);
@@ -231,7 +222,8 @@ footer {
 
 .game-area {
     position: relative;
-    height: 180px;
+    height: 200px;
+    flex-grow: 1;
     background: var(--bg-color);
     border: 2px dashed var(--border-color);
     border-radius: 6px;
@@ -239,9 +231,15 @@ footer {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+.screen-flex {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
 .game-header {
@@ -251,6 +249,7 @@ footer {
     right: 12px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--tag-color);
@@ -260,14 +259,12 @@ footer {
 .bug {
     position: absolute;
     font-size: 1.5rem;
-    cursor: pointer;
+    cursor: crosshair;
     user-select: none;
-    transition: transform 0.1s;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    transition: left 0.1s ease, top 0.1s ease, transform 0.1s;
     z-index: 10;
-}
-
-.bug:active {
-    transform: scale(0.6);
 }
 
 .game-btn {
@@ -280,6 +277,7 @@ footer {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 5;
 }
 
 .game-btn:hover {
@@ -287,7 +285,58 @@ footer {
     color: var(--bg-color);
 }
 
-#end-screen {
-    flex-direction: column;
-    align-items: center;
+.name-input {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-family: inherit;
+    text-align: center;
+    width: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.name-input:focus {
+    border-color: var(--accent-color);
+}
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--tag-color);
+    width: 100%;
+}
+
+.leaderboard-container h4 {
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.leaderboard-list li {
+    background: var(--border-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    /* BUG FIX: Clamps overflowing wide layouts securely */
+    max-width: 130px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
