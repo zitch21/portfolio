@@ -17,22 +17,19 @@
     </button>
 
     <header>
-        <div class="container header-content">
-            <div class="header-text">
-                <h1>Emmanuel John P. Bernal</h1>
-                <p class="subtitle">4th-Year BSCS Student @ DMMMSU</p>
-            </div>
-            <div class="avatar-circle">EJ</div>
+        <div class="container">
+            <h1 id="my-name">Emmanuel John P. Bernal</h1>
+            <p class="subtitle">4th-Year BSCS Student @ DMMMSU</p>
         </div>
     </header>
 
     <main class="container">
-        <section id="about">
+        <section id="about" class="fade-section">
             <h2>About Me</h2>
             <p>I'm a 4th-year Computer Science student based in Tubao, La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
         </section>
 
-        <section id="projects">
+        <section id="projects" class="fade-section">
             <h2>My Projects</h2>
             <div class="project-grid">
                 <div class="project-card">
@@ -48,7 +45,7 @@
             </div>
         </section>
 
-        <section id="skills">
+        <section id="skills" class="fade-section">
             <h2>What I Do</h2>
             <div class="skills-grid">
                 <div class="skill-category">
@@ -68,6 +65,7 @@
     </footer>
 
     <script>
+        // --- Theme Toggle Logic ---
         const toggleBtn = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
         
@@ -90,6 +88,42 @@
                 icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
             }
         }
+
+        // --- Scroll Reveal Animation ---
+        const observerOptions = {
+            threshold: 0.1, // Triggers when 10% of the element is visible
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- Easter Egg: 3 Clicks to Glitch ---
+        const nameElement = document.getElementById('my-name');
+        let clickCount = 0;
+
+        nameElement.addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 3) {
+                nameElement.classList.add('glitch-active');
+                
+                // Remove the glitch after 1 second so it isn't distracting
+                setTimeout(() => {
+                    nameElement.classList.remove('glitch-active');
+                    clickCount = 0;
+                }, 1000);
+            }
+        });
     </script>
 </body>
 </html>

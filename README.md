@@ -6,15 +6,16 @@ A simple, interactive personal website built for my Web Programming course. It s
 * **Structure & Logic:** Standard HTML5 and Vanilla JavaScript.
 * **Styling:** External CSS3 using custom variables for theme management. 
 * **Interactive Theme Switcher:** A dark/light mode toggle button that remembers your preference using the browser's `localStorage`.
-    * *Light Mode:* Off-White & Tech Blue
-    * *Dark Mode:* Black & Golden Yellow
-* **Responsive Layout:** Automatically adjusts for mobile screens and includes a styled profile photo.
+* **Dynamic Presentation Elements:**
+    * *Scroll Reveals:* Uses the native JavaScript `IntersectionObserver` to smoothly fade in content as the user scrolls down the page.
+    * *Hidden Easter Egg:* A pure CSS keyframe glitch animation attached to the header name, triggered by a specific click pattern.
+    * *(Note: All animations were built natively without relying on heavy external libraries to maintain optimal performance).*
 
 ## 🤖 AI Collaboration Workflow
 To meet the assignment guidelines, this project was developed by experimenting with AI tools like Cursor and GitHub Copilot. 
-* **Drafting:** Used natural language prompts to quickly set up the basic HTML structure and CSS layout.
-* **Troubleshooting:** Worked with the AI to fix minor bugs, like moving inline styles to the external CSS file and fixing the page flashing when loading dark mode.
-* **Learning:** Used the AI as a guide to understand how things like `localStorage` and responsive flexbox layouts actually work in practice.
+* **Drafting:** Used natural language prompts to quickly set up the basic HTML structure and responsive CSS layout.
+* **Troubleshooting:** Worked with the AI to fix minor bugs, such as moving inline styles to an external CSS file, fixing dark mode rendering flashes, and deciding to pivot from a buggy `.png` file path to a cleaner, text-only minimalist layout.
+* **Feature Integration:** Collaborated with the AI to generate and integrate the Intersection Observer logic and CSS keyframes for the interactive presentation elements.
 
 ## 📈 Version Control
-This project uses Git and GitHub to track progress. I used semantic commit messages (like `feat:`, `fix:`, and `refactor:`) to keep my update history organized for grading.
+This project uses Git and GitHub to track progress. I used semantic commit messages (like `feat:`, `fix:`, and `refactor:`) to keep my update history organized for grading evaluation.
