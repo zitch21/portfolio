@@ -172,7 +172,6 @@ footer {
 .fade-section {
     opacity: 0;
     transform: translateY(30px);
-    /* will-change tells the browser to prep the GPU, completely eliminating scroll lag */
     will-change: transform, opacity;
     transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
@@ -182,21 +181,21 @@ footer {
     transform: translateY(0);
 }
 
-/* 2. Sleek, CPU-Friendly "Chromatic Aberration" Tech Effect */
+/* 2. Sleek, Slowed-Down "Chromatic Aberration" Tech Effect */
 #my-name {
     cursor: crosshair;
     position: relative;
     display: inline-block;
-    transition: transform 0.2s ease, color 0.2s ease;
+    /* Slowed the base scale and color shift to 0.6 seconds */
+    transition: transform 0.6s ease, color 0.6s ease;
     will-change: transform;
 }
 
 #my-name:hover {
-    transform: scale(1.02); /* Slight pop out */
+    transform: scale(1.02);
     color: var(--accent-color);
 }
 
-/* Creates a cyan/magenta 3D split effect using GPU transforms instead of CPU paints */
 #my-name::before,
 #my-name::after {
     content: "Emmanuel John P. Bernal";
@@ -204,7 +203,8 @@ footer {
     top: 0;
     left: 0;
     opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    /* Drastically slowed the split effect to 1.2 seconds for a smooth, lazy drift */
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
     z-index: -1;
     pointer-events: none;
 }
