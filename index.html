@@ -11,7 +11,6 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
 
-    <!-- Load Core API Packages & Drivers -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="env-config.js"></script>
@@ -42,8 +41,7 @@
                 <div class="avatar-fallback">EJ</div>
             </div>
             
-            <!-- Target DOM Node for Typewriter Recursion -->
-            <h1 id="my-name" data-text=""></h1>
+            <h1 id="my-name"></h1>
             
             <p class="subtitle">Student and Beginner Web Developer</p>
             <p class="school-tag">4th-Year BSCS Student @ DMMMSU</p>
@@ -149,7 +147,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 | Built with Git, HTML/CSS, & GitHub Pages</p>
+        <p>&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
     </footer>
 
     <script>
@@ -197,16 +195,14 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Hardware-Accelerated Typewriter Sequence ---
+        // --- Hardware-Accelerated Typewriter Sequence (Glitch Logic Removed) ---
         const nameEl = document.getElementById('my-name');
         const targetText = "Hi! I'm Emmanuel John Bernal";
         let charIndex = 0;
 
         function renderTypewriter() {
             if (charIndex <= targetText.length) {
-                const buffer = targetText.substring(0, charIndex);
-                nameEl.textContent = buffer;
-                nameEl.setAttribute('data-text', buffer);
+                nameEl.textContent = targetText.substring(0, charIndex);
                 charIndex++;
                 setTimeout(renderTypewriter, 70); 
             } else {

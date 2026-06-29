@@ -27,7 +27,7 @@
 /* Enable Native Smooth Scrolling Across Anchor Nodes */
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px; /* Protects section headings from sticky nav clipping */
+    scroll-padding-top: 80px; 
 }
 
 * {
@@ -250,7 +250,9 @@ footer {
     margin-top: 4rem;
 }
 
-/* Presentation Layer Elements */
+/* =========================================
+   TYPEWRITER PRESENTATION STYLES
+   ========================================= */
 .fade-section {
     opacity: 0;
     transform: translateY(30px);
@@ -264,41 +266,29 @@ footer {
 }
 
 #my-name {
-    cursor: crosshair;
     position: relative;
     display: inline-block;
+    border-right: 3px solid var(--accent-color);
+    padding-right: 4px;
+    animation: blink-caret 0.8s step-end infinite;
     transition: transform 0.6s ease, color 0.6s ease;
     will-change: transform;
+    min-height: 1.2em;
+}
+
+#my-name.typing-complete {
+    border-color: transparent;
+    animation: none;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: var(--accent-color); }
 }
 
 #my-name:hover {
     transform: scale(1.02);
     color: var(--accent-color);
-}
-
-/* BUG FIX: Chromatic strings synchronized to prevent layered hover offsets */
-#my-name::before,
-#my-name::after {
-    content: "Hi! I'm Emmanuel John P. Bernal";
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
-    z-index: -1;
-    pointer-events: none;
-}
-
-#my-name::before { color: #00fff9; }
-#my-name::after { color: #ff00c1; }
-
-#my-name:hover::before {
-    opacity: 0.8;
-    transform: translate(-3px, -2px);
-}
-#my-name:hover::after {
-    opacity: 0.8;
-    transform: translate(3px, 2px);
 }
 
 /* =========================================
