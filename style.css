@@ -163,10 +163,6 @@ footer {
     margin-top: 4rem;
 }
 
-/* =========================================
-   PERFORMANCE-OPTIMIZED PRESENTATION ELEMENTS
-   ========================================= */
-
 .fade-section {
     opacity: 0;
     transform: translateY(30px);
@@ -303,7 +299,6 @@ footer {
     border-color: var(--accent-color);
 }
 
-/* Leaderboard Styles */
 .leaderboard-container {
     text-align: center;
     font-size: 0.8rem;
@@ -334,12 +329,15 @@ footer {
     padding: 2px 8px;
     border-radius: 12px;
     font-weight: 600;
-    /* BUG FIX: Clamps overflowing wide layouts securely */
     max-width: 130px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
+
+/* =========================================
+   CONTACT FORM LAYOUT DESIGN
+   ========================================= */
 
 #contact-form .name-input {
     width: 100%;

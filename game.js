@@ -1,12 +1,16 @@
 /**
- * Debug Defender: Pro - Modular Cloud Engine
- * Architecture: Serverless Decoupled Component
+ * Debug Defender: Pro - Isolated Modular Game Engine
  */
 
-// --- Global Supabase Verification and Handshake Access ---
-const SUPABASE_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-const SUPABASE_ANON_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize runtime variables by tapping directly into the shared page handshake
+const getSupabaseClient = () => {
+    if (window.supabaseInstance) return window.supabaseInstance;
+    const URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
+    const KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+    return supabase.createClient(URL, KEY);
+};
+
+const gameSupabase = getSupabaseClient();
 
 // --- Game Target Node Handlers ---
 const startBtn = document.getElementById('start-game-btn');
@@ -24,7 +28,6 @@ const gameArea = document.getElementById('game-container');
 const startLeaderboard = document.getElementById('start-leaderboard');
 const nameInput = document.getElementById('player-name');
 
-// --- Game Runtime State Registry ---
 let score = 0;
 let timeLeft = 15;
 let gameInterval;
@@ -32,15 +35,12 @@ let bugTimeout;
 let isPlaying = false;
 let isSaving = false; 
 
-/**
- * Reads data elements live from Cloud DB engine and syncs leaderboard listing
- */
 async function updateLeaderboardUI() {
     if (!startLeaderboard) return;
     startLeaderboard.innerHTML = '';
     
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await gameSupabase
             .from('game_leaderboard')
             .select('player_name, score')
             .order('score', { ascending: false })
@@ -71,22 +71,19 @@ async function updateLeaderboardUI() {
     }
 }
 
-/**
- * Safe multi-instance insert pipeline invocation
- */
 async function saveScore(newScore, playerName) {
     if (newScore === 0) return;
     const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
     
     try {
-        const { error } = await supabaseClient
+        const { error } = await gameSupabase
             .from('game_leaderboard')
             .insert([{ player_name: finalName, score: newScore }]);
         
         if (error) throw error;
         await updateLeaderboardUI();
     } catch (err) {
-        console.error("Score Cloud Migration Interrupted:", err.message);
+        console.error("Score Save Error:", err.message);
     }
 }
 
@@ -118,7 +115,7 @@ function startGame() {
     }, 1000);
 }
 
-async function endGame() {
+function endGame() {
     isPlaying = false;
     clearInterval(gameInterval);
     clearTimeout(bugTimeout); 
@@ -157,7 +154,6 @@ function moveBug() {
     bugTimeout = setTimeout(moveBug, speed);
 }
 
-// --- Wire Touch Events Safely ---
 if (bug) {
     bug.addEventListener('pointerdown', (e) => {
         if (!isPlaying) return;
@@ -186,59 +182,5 @@ if (restartBtn) {
     });
 }
 
-// --- Contact Form Database Gateway Integration ---
-const contactForm = document.getElementById('contact-form');
-const formStatus = document.getElementById('form-status');
-const submitBtn = document.getElementById('submit-btn');
-
-if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-        }
-        if (formStatus) formStatus.style.display = 'none';
-
-        const uName = document.getElementById('user-name').value;
-        const uEmail = document.getElementById('user-email').value;
-        const uMsg = document.getElementById('user-message').value;
-
-        try {
-            const { error } = await supabaseClient
-                .from('contact_submissions')
-                .insert([{ name: uName, email: uEmail, message: uMsg }]);
-
-            if (error) throw error;
-
-            if (formStatus) {
-                formStatus.textContent = "🚀 Message sent successfully!";
-                formStatus.style.color = "var(--accent-color)";
-                formStatus.style.display = "block";
-            }
-            contactForm.reset();
-        } catch (err) {
-            console.error('Submission Routing Error:', err.message);
-            if (formStatus) {
-                formStatus.textContent = "❌ Failed to send message. Please try again.";
-                formStatus.style.color = "#ff4d4d";
-                formStatus.style.display = "block";
-            }
-        } finally {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Message';
-            }
-        }
-    });
-}
-
-// Initialize on execution start
+// Automatically populate scores on initialization
 updateLeaderboardUI();
-
-// Hook up dynamically tracking on the contact view frame safely via backward verification reference
-const contactSection = document.getElementById('contact');
-if (contactSection && window.scrollObserverInstance) {
-    window.scrollObserverInstance.observe(contactSection);
-}
