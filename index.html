@@ -12,6 +12,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="env-config.js"></script>
     <script src="game.js" defer></script>
 </head>
@@ -123,6 +124,10 @@
         const globalSupabase = supabase.createClient(DB_URL, DB_KEY);
         window.supabaseInstance = globalSupabase;
 
+        // --- EmailJS Setup Initialization ---
+        const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "YOUR_LOCAL_EMAILJS_PUBLIC_KEY";
+        emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+
         // --- Theme Toggle Logic ---
         const toggleBtn = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
@@ -157,7 +162,7 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Contact Form Handling ---
+        // --- Contact Form Handling (Supabase Cloud Sync + EmailJS Alert Integration) ---
         const contactForm = document.getElementById('contact-form');
         const formStatus = document.getElementById('form-status');
         const submitBtn = document.getElementById('submit-btn');
@@ -169,23 +174,38 @@
                 submitBtn.textContent = 'Sending...';
                 formStatus.style.display = 'none';
 
-                try {
-                    const { error } = await globalSupabase
-                        .from('contact_submissions')
-                        .insert([{ 
-                            name: document.getElementById('user-name').value, 
-                            email: document.getElementById('user-email').value, 
-                            message: document.getElementById('user-message').value 
-                        }]);
+                const inputName = document.getElementById('user-name').value;
+                const inputEmail = document.getElementById('user-email').value;
+                const inputMessage = document.getElementById('user-message').value;
 
-                    if (error) throw error;
-                    formStatus.textContent = "🚀 Message sent successfully!";
+                try {
+                    // Action 1: Insert values straight into Supabase Cloud Table
+                    const supabasePromise = globalSupabase
+                        .from('contact_submissions')
+                        .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
+
+                    // Action 2: Compile payload and dispatch EmailJS transaction alert
+                    const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "YOUR_LOCAL_SERVICE_ID";
+                    const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "YOUR_LOCAL_TEMPLATE_ID";
+                    
+                    const emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
+                        name: inputName,
+                        email: inputEmail,
+                        message: inputMessage
+                    });
+
+                    // Wait for both cloud services to resolve concurrently
+                    const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
+
+                    if (supabaseResult.error) throw supabaseResult.error;
+
+                    formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
                     formStatus.style.color = "var(--accent-color)";
                     formStatus.style.display = "block";
                     contactForm.reset();
                 } catch (err) {
-                    console.error('Submission Error:', err.message);
-                    formStatus.textContent = "❌ Failed to send message. Please try again.";
+                    console.error('Submission Processing Failure:', err.message || err);
+                    formStatus.textContent = "❌ Submission failed. Verify your network or dashboard credentials.";
                     formStatus.style.color = "#ff4d4d";
                     formStatus.style.display = "block";
                 } finally {
