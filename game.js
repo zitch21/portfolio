@@ -84,6 +84,7 @@ async function saveScore(newScore, playerName) {
         await updateLeaderboardUI();
     } catch (err) {
         console.error("Score Save Error:", err.message);
+        throw err; // Propagate up to ensure correct error lifecycle capture
     }
 }
 
@@ -142,10 +143,11 @@ function moveBug() {
     clearTimeout(bugTimeout);
     if (!isPlaying || !bug || !gameArea) return;
 
-    const maxX = gameArea.clientWidth - 35; 
-    const maxY = gameArea.clientHeight - 60; 
-    const randomX = Math.floor(Math.random() * Math.max(0, maxX)) + 5; 
-    const randomY = Math.floor(Math.random() * Math.max(0, maxY)) + 35; 
+    // Responsive bounds protection clamping minimum layout dimensions safely
+    const maxX = Math.max(10, gameArea.clientWidth - 45); 
+    const maxY = Math.max(40, gameArea.clientHeight - 65); 
+    const randomX = Math.floor(Math.random() * maxX) + 5; 
+    const randomY = Math.floor(Math.random() * (maxY - 35)) + 35; 
     
     bug.style.left = `${randomX}px`;
     bug.style.top = `${randomY}px`;
@@ -175,10 +177,18 @@ if (restartBtn) {
         if (isSaving) return;
         isSaving = true;
 
-        if (score > 0 && nameInput) {
-            await saveScore(score, nameInput.value);
+        try {
+            if (score > 0 && nameInput) {
+                await saveScore(score, nameInput.value);
+            }
+            startGame();
+        } catch (err) {
+            console.error("Engine Restart Interrupted:", err.message);
+            // Flash a dynamic UI hint on failure if required; reset lock state safely
+            if (endMessage) endMessage.textContent = "⚠️ Sync Error. Retrying...";
+        } finally {
+            isSaving = false;
         }
-        startGame();
     });
 }
 
