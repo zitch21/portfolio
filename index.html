@@ -13,6 +13,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="env-config.js"></script>
+    <script src="game.js" defer></script>
 </head>
 <body>
     <button id="theme-toggle" aria-label="Toggle dark mode" class="theme-btn">
@@ -50,7 +51,7 @@
                         <div id="start-screen" class="screen-flex">
                             <button id="start-game-btn" class="game-btn" style="margin-bottom: 10px;">Start Debugging</button>
                             <div class="leaderboard-container">
-                                <h4>Top Debuggers</h4>
+                                <h4>Global Top Debuggers</h4>
                                 <ol id="start-leaderboard" class="leaderboard-list"></ol>
                             </div>
                         </div>
@@ -150,205 +151,8 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Mini-Game Logic ---
-        const startBtn = document.getElementById('start-game-btn');
-        const restartBtn = document.getElementById('restart-game-btn');
-        const startScreen = document.getElementById('start-screen');
-        const playScreen = document.getElementById('play-screen');
-        const endScreen = document.getElementById('end-screen');
-        const bug = document.getElementById('bug');
-        const scoreDisplay = document.getElementById('score');
-        const timeDisplay = document.getElementById('time');
-        const currentBestDisplay = document.getElementById('current-best');
-        const finalScoreDisplay = document.getElementById('final-score');
-        const endMessage = document.getElementById('end-message');
-        const gameArea = document.getElementById('game-container');
-        const startLeaderboard = document.getElementById('start-leaderboard');
-        const nameInput = document.getElementById('player-name');
-
-        let score = 0;
-        let timeLeft = 15;
-        let gameInterval;
-        let bugTimeout; 
-        let isPlaying = false;
-        let isSaving = false; 
-        
-        let rawScores = JSON.parse(localStorage.getItem('debugScores')) || [];
-        let highScores = rawScores.map(item => {
-            if (typeof item === 'number') {
-                return { name: "Anon", score: item };
-            }
-            return item;
-        });
-
-        function updateLeaderboardUI() {
-            startLeaderboard.innerHTML = '';
-            if (highScores.length === 0) {
-                const emptyLi = document.createElement('li');
-                emptyLi.textContent = 'No scores yet!';
-                startLeaderboard.appendChild(emptyLi);
-                currentBestDisplay.textContent = '0';
-                return;
-            }
-            
-            currentBestDisplay.textContent = highScores[0].score;
-            highScores.forEach(entry => {
-                const li = document.createElement('li');
-                li.textContent = `${entry.name}: ${entry.score}`;
-                startLeaderboard.appendChild(li);
-            });
-        }
-
-        function saveScore(newScore, playerName) {
-            if (newScore === 0) return;
-            const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
-            highScores.push({ name: finalName, score: newScore });
-            highScores.sort((a, b) => b.score - a.score);
-            highScores = highScores.slice(0, 5); 
-            localStorage.setItem('debugScores', JSON.stringify(highScores));
-            
-            updateLeaderboardUI();
-        }
-
-        function startGame() {
-            clearInterval(gameInterval); 
-            clearTimeout(bugTimeout);
-            
-            score = 0;
-            timeLeft = 15;
-            isPlaying = true;
-            isSaving = false; 
-            scoreDisplay.textContent = score;
-            timeDisplay.textContent = timeLeft;
-            nameInput.value = '';
-
-            startScreen.style.display = 'none';
-            endScreen.style.display = 'none';
-            playScreen.style.display = 'block';
-
-            moveBug();
-
-            gameInterval = setInterval(() => {
-                timeLeft--;
-                timeDisplay.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        function endGame() {
-            isPlaying = false;
-            clearInterval(gameInterval);
-            clearTimeout(bugTimeout); 
-            
-            playScreen.style.display = 'none';
-            endScreen.style.display = 'flex';
-            finalScoreDisplay.textContent = score;
-
-            if (score > 0) {
-                nameInput.style.display = 'block';
-                if (highScores.length > 0 && score > highScores[0].score) {
-                    endMessage.textContent = "🏆 New High Score!";
-                } else {
-                    endMessage.textContent = "Time's Up!";
-                }
-            } else {
-                nameInput.style.display = 'none';
-                endMessage.textContent = "Try again!";
-            }
-        }
-
-        function moveBug() {
-            clearTimeout(bugTimeout);
-            if (!isPlaying) return;
-
-            const maxX = gameArea.clientWidth - 35; 
-            const maxY = gameArea.clientHeight - 60; 
-            const randomX = Math.floor(Math.random() * Math.max(0, maxX)) + 5; 
-            const randomY = Math.floor(Math.random() * Math.max(0, maxY)) + 35; 
-            
-            bug.style.left = `${randomX}px`;
-            bug.style.top = `${randomY}px`;
-
-            let speed = Math.max(400, 1000 - (score * 40)); 
-            bugTimeout = setTimeout(moveBug, speed);
-        }
-
-        bug.addEventListener('pointerdown', (e) => {
-            if (!isPlaying) return;
-            e.preventDefault(); 
-            score++;
-            scoreDisplay.textContent = score;
-            
-            bug.style.transform = 'scale(0.3)';
-            setTimeout(() => bug.style.transform = 'scale(1)', 100);
-
-            moveBug(); 
-        });
-
-        updateLeaderboardUI();
-        startBtn.addEventListener('click', startGame);
-        
-        restartBtn.addEventListener('click', () => {
-            if (isSaving) return;
-            isSaving = true;
-
-            if (score > 0) {
-                saveScore(score, nameInput.value);
-            }
-            startGame();
-        });
-
-        // --- Supabase Client Verification & Authorization Execution ---
-        const SUPABASE_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-        const SUPABASE_ANON_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // --- Contact Form Submission Database Routing ---
-        const contactForm = document.getElementById('contact-form');
-        const formStatus = document.getElementById('form-status');
-        const submitBtn = document.getElementById('submit-btn');
-
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            formStatus.style.display = 'none';
-
-            const uName = document.getElementById('user-name').value;
-            const uEmail = document.getElementById('user-email').value;
-            const uMsg = document.getElementById('user-message').value;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('contact_submissions')
-                    .insert([{ name: uName, email: uEmail, message: uMsg }]);
-
-                if (error) throw error;
-
-                formStatus.textContent = "🚀 Message sent successfully!";
-                formStatus.style.color = "var(--accent-color)";
-                formStatus.style.display = "block";
-                contactForm.reset();
-            } catch (err) {
-                console.error('Submission Routing Error:', err.message);
-                formStatus.textContent = "❌ Failed to send message. Please try again.";
-                formStatus.style.color = "#ff4d4d";
-                formStatus.style.display = "block";
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Message';
-            }
-        });
-
-        // Re-trigger scroll observer tracking so the new form section fades smoothly
-        const contactSection = document.getElementById('contact');
-        if (contactSection && typeof observer !== 'undefined') {
-            observer.observe(contactSection);
-        }
+        // --- Global Shared Objects Shared with game.js ---
+        window.scrollObserverInstance = observer;
     </script>
 </body>
 </html>

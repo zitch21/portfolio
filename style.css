@@ -340,3 +340,32 @@ footer {
     overflow: hidden;
     white-space: nowrap;
 }
+
+#contact-form .name-input {
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+#contact-form textarea.name-input {
+    min-height: 110px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#contact-form label {
+    margin-top: 0.2rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+#form-status {
+    margin-top: 0.5rem;
+    animation: fadeInStatus 0.3s ease-out forwards;
+}
+
+@keyframes fadeInStatus {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
