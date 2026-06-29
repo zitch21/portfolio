@@ -1,56 +1,33 @@
-/* ==========================================================================
-   DEEP OCEAN SYSTEM TOKENS & DEPTH GRADIENTS
-   ========================================================================== */
+/* Base fallback variables (Light Mode: Off-White & Tech-Blue) */
 :root {
-    /* Light Mode: Tropical Shoreline down to Midnight Zone */
-    --surface-ray: rgba(255, 255, 255, 0.65);
-    --ocean-depth-gradient: linear-gradient(
-        to bottom,
-        #06b6d4 0%,     /* Sunlight Surface: Vibrant Cyan */
-        #0284c7 20%,    /* Twilight Zone: Rich Blue */
-        #0369a1 45%,    /* Deep Sea: Navy Blue */
-        #0f172a 75%,    /* Abyssal Zone: Midnight Navy */
-        #020617 100%    /* Hadal Trenches: Blackened Indigo */
-    );
-    --text-color: #0f172a;
-    --text-muted: #334155;
-    --accent-color: #0284c7;
-    --card-bg: rgba(255, 255, 255, 0.75);
-    --card-border: rgba(255, 255, 255, 0.5);
-    --nav-blur-bg: rgba(255, 255, 255, 0.7);
-    --shadow-color: rgba(2, 132, 199, 0.1);
-    --bioluminescence: transparent;
-    --glow-strength: 0px 0px 0px transparent;
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+    --accent-color: #0056b3;
+    --card-bg: #ffffff;
+    --border-color: #e9ecef;
+    --tag-color: #495057;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --input-focus-bg: #ffffff;
+    --nav-blur-bg: rgba(248, 249, 250, 0.85);
 }
 
+/* Dark Mode Overrides (Black & Golden-Yellow) */
 :root[data-theme="dark"] {
-    /* Dark Mode: Nocturnal Abyss down to Mariana Trench with Bioluminescence */
-    --surface-ray: rgba(56, 189, 248, 0.25);
-    --ocean-depth-gradient: linear-gradient(
-        to bottom,
-        #0f172a 0%,     /* Night Surface */
-        #020617 25%,    /* Midnight Depth */
-        #010409 50%,    /* Abyssal Floor */
-        #000000 100%    /* Absolute Void */
-    );
-    --text-color: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent-color: #38bdf8; /* Electric Bioluminescent Blue */
-    --card-bg: rgba(15, 23, 42, 0.65);
-    --card-border: rgba(56, 189, 248, 0.2);
-    --nav-blur-bg: rgba(15, 23, 42, 0.75);
-    --shadow-color: rgba(56, 189, 248, 0.2);
-    --bioluminescence: #38bdf8;
-    --glow-strength: 0px 0px 14px rgba(56, 189, 248, 0.6);
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --accent-color: #ffcc00;
+    --card-bg: #1e1e1e;
+    --border-color: #2d2d2d;
+    --tag-color: #a0a0a0;
+    --shadow-color: rgba(255, 204, 0, 0.03);
+    --input-focus-bg: #1a1a1a;
+    --nav-blur-bg: rgba(18, 18, 18, 0.85);
 }
 
-/* ==========================================================================
-   GLOBAL RESET & PERFORMANCE MAPS
-   ========================================================================== */
+/* Enable Native Smooth Scrolling Across Anchor Nodes */
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px;
-    height: 100%;
+    scroll-padding-top: 80px; 
 }
 
 * {
@@ -59,24 +36,19 @@ html {
     padding: 0;
 }
 
+body, .skill-category, header, footer, .theme-btn, .name-input, .game-btn, .avatar-container, .navbar, .nav-links a, .avatar-fallback {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    
-    /* SCROLL DEPTH ENGINE: Spans total canvas height so scrolling simulates diving deeper */
-    background: var(--ocean-depth-gradient);
-    background-attachment: scroll;
-    min-height: 100vh;
-}
-
-/* Unified transition timing for all theme updates */
-body, .project-card, .skill-category, header, footer, .theme-btn, .name-input, .game-btn, .navbar, .nav-links a {
-    transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .container {
@@ -85,31 +57,16 @@ body, .project-card, .skill-category, header, footer, .theme-btn, .name-input, .
     padding: 2rem 1rem;
 }
 
-/* ==========================================================================
-   SCROLL DEPTH ELEMENTS (LIGHT RAYS)
-   ========================================================================== */
-.ocean-light-rays {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120vh; /* Fades out naturally as user down-scrolls past the header */
-    background: radial-gradient(circle at 50% -20%, var(--surface-ray) 0%, transparent 70%),
-                linear-gradient(to bottom, transparent, transparent);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* ==========================================================================
-   HIGH-END GLASSMORPHISM NAVIGATION
-   ========================================================================== */
+/* =========================================
+   STICKY STYLISH NAVIGATION BAR
+   ========================================= */
 .navbar {
     position: sticky;
     top: 0;
     background: var(--nav-blur-bg);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px); /* Standard listed after prefixed property to appease linters */
-    border-bottom: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
     z-index: 1000;
 }
 
@@ -128,7 +85,6 @@ body, .project-card, .skill-category, header, footer, .theme-btn, .name-input, .
     color: var(--accent-color);
     text-decoration: none;
     letter-spacing: -0.5px;
-    text-shadow: var(--glow-strength);
 }
 
 .nav-menu {
@@ -147,7 +103,7 @@ body, .project-card, .skill-category, header, footer, .theme-btn, .name-input, .
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    opacity: 0.8;
+    opacity: 0.75;
 }
 
 .nav-links a:hover {
@@ -158,33 +114,25 @@ body, .project-card, .skill-category, header, footer, .theme-btn, .name-input, .
 .theme-btn {
     background: var(--card-bg);
     color: var(--text-color);
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--border-color);
     padding: 8px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .theme-btn:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
     transform: scale(1.05);
-    box-shadow: var(--glow-strength);
 }
 
-/* ==========================================================================
-   HEADER SECTION & PORTFOLIO TYPOGRAPHY
-   ========================================================================== */
-header {
-    position: relative;
-    z-index: 2;
-    border-bottom: 1px solid var(--card-border);
-    padding: 4rem 0 3rem 0;
-}
-
+/* =========================================
+   HEADER CENTERING & ENLARGEMENT
+   ========================================= */
 .header-content {
     display: flex;
     flex-direction: column;
@@ -193,31 +141,34 @@ header {
     gap: 1.25rem;
 }
 
+header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 4rem 0 3rem 0;
+}
+
 header h1 {
     font-size: 2.6rem;
     font-weight: 700;
     letter-spacing: -0.5px;
-    text-shadow: var(--glow-strength);
 }
 
 .subtitle {
     color: var(--text-color);
     font-weight: 600;
+    margin-top: 0.25rem;
     font-size: 1.25rem;
 }
 
 .school-tag {
     color: var(--accent-color);
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     margin-top: -0.5rem;
-    text-shadow: var(--glow-strength);
+    opacity: 0.9;
 }
 
 section {
-    margin: 4.5rem 0;
-    position: relative;
-    z-index: 2;
+    margin: 3.5rem 0;
 }
 
 h2 {
@@ -227,22 +178,8 @@ h2 {
     padding-left: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    text-shadow: var(--glow-strength);
 }
 
-p {
-    color: var(--text-color);
-    opacity: 0.95;
-}
-
-/* Dynamic contrast safety constraints across lower vertical scroll sections */
-#contact h2, #skills h2, #projects h2 {
-    color: var(--text-color); 
-}
-
-/* ==========================================================================
-   ABYSSAL GLASSMORPHISM CARDS (READABILITY PROTECTED)
-   ========================================================================== */
 .project-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -255,38 +192,34 @@ p {
     }
 }
 
-.project-card, .skill-category {
+.project-card {
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    backdrop-filter: blur(12px) saturate(140%); /* Correct sorting format enforces cross-engine compilation */
+    border: 1px solid var(--border-color);
     padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    border-radius: 8px;
+    cursor: default;
+    transform: translateY(0);
     will-change: transform, box-shadow;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-                border-color 0.3s ease, 
-                box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .project-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     border-color: var(--accent-color);
-    box-shadow: 0 12px 24px var(--shadow-color), var(--glow-strength);
+    box-shadow: 0 12px 24px var(--shadow-color);
 }
 
 .project-card h3 {
+    color: var(--text-color);
     margin-bottom: 0.25rem;
-    text-shadow: var(--glow-strength);
 }
 
 .tag {
     font-size: 0.8rem;
     color: var(--accent-color);
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .skills-grid {
@@ -295,179 +228,36 @@ p {
     gap: 1.25rem;
 }
 
+.skill-category {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
+    border-radius: 8px;
+}
+
 .skill-category h3 {
     font-size: 1.05rem;
     margin-bottom: 0.5rem;
     color: var(--accent-color);
-    text-shadow: var(--glow-strength);
 }
 
-.game-card-layout {
-    display: flex; 
-    flex-direction: column;
-}
-
-.game-subtitle {
-    font-size: 0.85rem; 
-    margin-bottom: 10px;
-    color: var(--text-muted);
-}
-
-/* ==========================================================================
-   PREMIUM DEEP SEA INTERACTION CONTROLS
-   ========================================================================== */
-.game-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
-    border: 2px solid var(--accent-color);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px); /* Fixed Safari fallback sequence omission */
-    box-shadow: var(--glow-strength);
-}
-
-#start-game-btn {
-    margin-bottom: 10px; /* Replaces inline HTML styles securely via direct node matching */
-}
-
-.game-btn:hover {
-    background: var(--accent-color);
-    color: #ffffff;
-    box-shadow: 0 0 20px var(--accent-color);
-    transform: scale(1.02);
-}
-
-.name-input {
-    background: rgba(0, 0, 0, 0.15);
-    color: var(--text-color);
-    border: 1px solid var(--card-border);
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    font-family: inherit;
+footer {
     text-align: center;
-    width: 140px;
-    outline: none;
+    padding: 3rem 2rem;
+    font-size: 0.85rem;
+    color: var(--tag-color);
+    border-top: 1px solid var(--border-color);
+    margin-top: 4rem;
 }
 
-:root[data-theme="light"] .name-input {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.name-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px var(--accent-color), var(--glow-strength);
-}
-
-/* ==========================================================================
-   MINI-GAME STRUCTURAL COHESION
-   ========================================================================== */
-.game-area {
-    position: relative;
-    height: 220px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 2px dashed var(--card-border);
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-:root[data-theme="light"] .game-area {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* Runtime Canvas Display Node Mappings */
-#play-screen, #end-screen {
-    display: none; /* Safely abstract structural states directly out of markup documents */
-}
-
-.game-best-meta {
-    font-size: 0.7rem; 
-    opacity: 0.7;
-}
-
-#end-message {
-    margin-bottom: 5px; 
-    color: var(--accent-color);
-}
-
-.game-score-summary {
-    font-weight: 600; 
-    margin-bottom: 10px;
-}
-
-.bug {
-    position: absolute;
-    font-size: 1.7rem;
-    cursor: crosshair;
-    -webkit-user-select: none;
-    user-select: none; /* Resolved user-select linter warning stack */
-    touch-action: manipulation;
-    transition: left 0.1s ease, top 0.1s ease, transform 0.1s; /* Restored scaling and physics behaviors */
-    z-index: 10; /* Ensures target element overlays depth screen containers safely */
-    filter: drop-shadow(var(--glow-strength));
-}
-
-.leaderboard-list li {
-    background: var(--card-border);
-    color: var(--text-color);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-}
-
-/* ==========================================================================
-   PREMIUM CONTACT FORM WRAPPER
-   ========================================================================== */
-#contact-form {
-    display: flex; 
-    flex-direction: column; 
-    gap: 1rem; 
-    width: 100%;
-}
-
-.form-group {
-    display: flex; 
-    flex-direction: column; 
-    gap: 0.5rem;
-}
-
-#submit-btn {
-    align-self: flex-start;
-}
-
-#form-status {
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: none;
-    margin-top: 0.25rem;
-    padding: 6px 12px;
-    border-radius: 4px;
-    animation: fadeInStatus 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-#contact-form:focus-within {
-    border-color: var(--accent-color);
-    box-shadow: 0 12px 40px var(--shadow-color), var(--glow-strength);
-}
-
-/* ==========================================================================
-   HARDWARE-ACCELERATED TRANSITIONS & SCROLL FADES
-   ========================================================================== */
+/* =========================================
+   TYPEWRITER PRESENTATION STYLES
+   ========================================= */
 .fade-section {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(30px);
     will-change: transform, opacity;
-    transition: opacity 0.9s cubic-bezier(0.215, 0.610, 0.355, 1), 
-                transform 0.9s cubic-bezier(0.215, 0.610, 0.355, 1);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-section.visible {
@@ -481,7 +271,14 @@ p {
     border-right: 3px solid var(--accent-color);
     padding-right: 4px;
     animation: blink-caret 0.8s step-end infinite;
+    transition: transform 0.6s ease, color 0.6s ease;
+    will-change: transform;
     min-height: 1.2em;
+}
+
+#my-name.typing-complete {
+    border-color: transparent;
+    animation: none;
 }
 
 @keyframes blink-caret {
@@ -489,9 +286,14 @@ p {
     50% { border-color: var(--accent-color); }
 }
 
-/* ==========================================================================
+#my-name:hover {
+    transform: scale(1.02);
+    color: var(--accent-color);
+}
+
+/* =========================================
    AVATAR MODULAR EXPANSION (180px)
-   ========================================================================== */
+   ========================================= */
 .avatar-container {
     position: relative;
     width: 180px;
@@ -499,34 +301,245 @@ p {
     border-radius: 50%;
     background: var(--card-bg);
     padding: 5px;
-    border: 1px solid var(--card-border);
-    box-shadow: 0 8px 24px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 16px var(--shadow-color);
+    transform: scale(1) rotate(0deg);
+    will-change: transform, box-shadow, border-color;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background: var(--card-bg);
+    transition: opacity 0.2s ease;
+}
+
+.avatar-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    font-weight: 800;
+    font-size: 2.5rem;
+    z-index: 1;
+    border-radius: 50%;
 }
 
 .avatar-container:hover {
     transform: scale(1.05) rotate(2deg);
     border-color: var(--accent-color);
-    box-shadow: 0 12px 32px var(--shadow-color), var(--glow-strength);
+    box-shadow: 0 12px 28px var(--shadow-color);
+}
+
+/* =========================================
+   SOCIAL MEDIA VECTOR HOVER LINK BUTTONS
+   ========================================= */
+.social-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
 }
 
 .social-icon {
     color: var(--text-color);
-    opacity: 0.7;
-    transition: color 0.3s ease, transform 0.3s ease;
+    opacity: 0.6;
+    transition: color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 
 .social-icon:hover {
     color: var(--accent-color);
     opacity: 1;
-    transform: translateY(-3px);
-    filter: drop-shadow(var(--glow-strength));
+    transform: translateY(-2px);
 }
 
-footer {
-    text-align: center;
-    padding: 4rem 2rem;
+/* =========================================
+   MINI-GAME STYLES
+   ========================================= */
+.game-area {
+    position: relative;
+    height: 200px;
+    flex-grow: 1;
+    background: var(--bg-color);
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.screen-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.game-header {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--tag-color);
+    z-index: 2;
+}
+
+.bug {
+    position: absolute;
+    font-size: 1.5rem;
+    cursor: crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    transition: left 0.1s ease, top 0.1s ease, transform 0.1s;
+    z-index: 10;
+}
+
+.game-btn {
+    background: var(--card-bg);
     color: var(--text-color);
-    opacity: 0.7;
-    border-top: 1px solid var(--card-border);
+    border: 2px solid var(--accent-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 5;
+}
+
+.game-btn:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.name-input {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-family: inherit;
+    text-align: center;
+    width: 140px;
+    outline: none;
+}
+
+.name-input:focus {
+    border-color: var(--accent-color);
+    background-color: var(--input-focus-bg);
+    box-shadow: 0 0 0 3px var(--shadow-color);
+}
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--tag-color);
+    width: 100%;
+}
+
+.leaderboard-container h4 {
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.leaderboard-list li {
+    background: var(--border-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    max-width: 130px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* =========================================
+   HIGH-END CONTACT FORM PREMIUM OVERRIDES
+   ========================================= */
+#contact-form {
+    gap: 1.25rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#contact-form:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+#contact-form .name-input {
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+}
+
+#contact-form textarea.name-input {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+#contact-form label {
+    margin-bottom: 0.1rem;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+#form-status {
+    margin-top: 0.25rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    animation: fadeInStatus 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInStatus {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
