@@ -1,4 +1,4 @@
-# Emmanuel Bernal | Personal Profile & Portfolio
+# Emmanuel John Bernal | Personal Profile & Portfolio
 
 A simple, interactive personal website built for my Web Programming course. It shares a bit about who I am as a 4th-Year BSCS student at DMMMSU in Tubao, La Union, and displays the coding projects I've been working on.
 
