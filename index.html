@@ -22,7 +22,10 @@
     </button>
 
     <header>
-        <div class="container">
+        <div class="container header-content">
+            <div class="avatar-container">
+                <img src="assets/stylized_profile_avatar.jpg" alt="Emmanuel John P. Bernal Avatar" class="profile-avatar">
+            </div>
             <h1 id="my-name">Emmanuel John P. Bernal</h1>
             <p class="subtitle">4th-Year BSCS Student @ DMMMSU</p>
         </div>
@@ -179,12 +182,10 @@
                 const inputMessage = document.getElementById('user-message').value;
 
                 try {
-                    // Action 1: Insert values straight into Supabase Cloud Table
                     const supabasePromise = globalSupabase
                         .from('contact_submissions')
                         .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
 
-                    // Action 2: Compile payload and dispatch EmailJS transaction alert
                     const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "YOUR_LOCAL_SERVICE_ID";
                     const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "YOUR_LOCAL_TEMPLATE_ID";
                     
@@ -194,7 +195,6 @@
                         message: inputMessage
                     });
 
-                    // Wait for both cloud services to resolve concurrently
                     const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
 
                     if (supabaseResult.error) throw supabaseResult.error;
