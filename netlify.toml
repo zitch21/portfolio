@@ -2,6 +2,10 @@
   publish = "."
   command = "echo \"window.env = { SUPABASE_URL: '${SUPABASE_URL}', SUPABASE_ANON_KEY: '${SUPABASE_ANON_KEY}' };\" > env-config.js"
 
+[build.environment]
+  # Instructs Netlify scanner to bypass verification paths for the generated client config file
+  SECRETS_SCAN_OMIT_PATHS = "env-config.js"
+
 [[headers]]
   for = "/*"
   [headers.values]
