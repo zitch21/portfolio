@@ -7,6 +7,7 @@
     --border-color: #e9ecef;
     --tag-color: #495057;
     --shadow-color: rgba(0, 0, 0, 0.05);
+    --input-focus-bg: #ffffff;
 }
 
 /* Dark Mode Overrides (Black & Golden-Yellow) */
@@ -18,6 +19,7 @@
     --border-color: #2d2d2d;
     --tag-color: #a0a0a0;
     --shadow-color: rgba(255, 204, 0, 0.03);
+    --input-focus-bg: #1a1a1a;
 }
 
 * {
@@ -26,8 +28,11 @@
     padding: 0;
 }
 
-body, .skill-category, header, footer, .theme-btn {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+body, .skill-category, header, footer, .theme-btn, .name-input, .game-btn {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -35,6 +40,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -51,6 +57,7 @@ header {
 header h1 {
     font-size: 2.6rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
@@ -91,13 +98,15 @@ h2 {
     padding: 1.5rem;
     border-radius: 8px;
     cursor: default;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    transform: translateY(0);
+    will-change: transform, box-shadow;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .project-card:hover {
     transform: translateY(-4px);
     border-color: var(--accent-color);
-    box-shadow: 0 6px 16px var(--shadow-color);
+    box-shadow: 0 12px 24px var(--shadow-color);
 }
 
 .project-card h3 {
@@ -152,6 +161,7 @@ h2 {
 .theme-btn:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
+    transform: scale(1.05);
 }
 
 footer {
@@ -163,11 +173,12 @@ footer {
     margin-top: 4rem;
 }
 
+/* Presentation Layer Elements */
 .fade-section {
     opacity: 0;
     transform: translateY(30px);
     will-change: transform, opacity;
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-section.visible {
@@ -279,26 +290,29 @@ footer {
 .game-btn:hover {
     background: var(--accent-color);
     color: var(--bg-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .name-input {
     background: var(--bg-color);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    padding: 6px 10px;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
     margin-bottom: 12px;
     font-family: inherit;
     text-align: center;
     width: 140px;
     outline: none;
-    transition: border-color 0.2s;
 }
 
 .name-input:focus {
     border-color: var(--accent-color);
+    background-color: var(--input-focus-bg);
+    box-shadow: 0 0 0 3px var(--shadow-color);
 }
 
+/* Leaderboard Styles */
 .leaderboard-container {
     text-align: center;
     font-size: 0.8rem;
@@ -336,34 +350,52 @@ footer {
 }
 
 /* =========================================
-   CONTACT FORM LAYOUT DESIGN
+   HIGH-END CONTACT FORM PREMIUM OVERRIDES
    ========================================= */
+
+#contact-form {
+    gap: 1.25rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#contact-form:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 8px 24px var(--shadow-color);
+}
 
 #contact-form .name-input {
     width: 100%;
     text-align: left;
     box-sizing: border-box;
+    font-size: 0.95rem;
 }
 
 #contact-form textarea.name-input {
-    min-height: 110px;
+    min-height: 120px;
     resize: vertical;
     font-family: inherit;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 #contact-form label {
-    margin-top: 0.2rem;
+    margin-bottom: 0.1rem;
     color: var(--text-color);
-    opacity: 0.9;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
 }
 
 #form-status {
-    margin-top: 0.5rem;
-    animation: fadeInStatus 0.3s ease-out forwards;
+    margin-top: 0.25rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    animation: fadeInStatus 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeInStatus {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
