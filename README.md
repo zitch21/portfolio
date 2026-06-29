@@ -1,22 +1,117 @@
-# Emmanuel John Bernal | Personal Profile & Portfolio
+# Emmanuel John Bernal — Personal Portfolio
 
-A simple, interactive personal website built for my Web Programming course. It shares a bit about who I am as a 4th-Year BSCS student at DMMMSU in Tubao, La Union, and displays the coding projects I've been working on.
+A simple, interactive personal website built for my Web Programming course.
+It showcases who I am as a 4th-Year BSCS student at **DMMMSU – SLUC**,
+and highlights the projects I've been working on throughout my studies.
 
-## 🛠️ Tech Stack & Features
-* **Structure & Styling:** Semantic HTML5 and modular CSS3 using custom variables for seamless theme management. 
-* **Interactive Theme Switcher:** A dark/light mode toggle button that remembers your preference using the browser's `localStorage`.
-* **Dynamic Presentation Elements:**
-    * *Scroll Reveals:* Uses the native JavaScript `IntersectionObserver` to smoothly fade in content as the user scrolls down the page.
-    * *Sleek Tech Hover:* A pure CSS GPU-accelerated chromatic aberration effect on the header title.
-* **Embedded JS Mini-Game ("Debug Defender: Pro"):** * *Evasive Difficulty Scaling:* The target dynamically increases speed based on the player's active score.
-    * *Persistent Leaderboards:* Uses JSON data structures in the browser's `localStorage` to save, sort, and display the Top 5 High Scores with player nicknames.
-    * *Mobile-Optimized:* Utilizes `pointerdown` events and CSS manipulation to prevent mobile zoom-lag and ensure snappy touch controls.
+---
 
-## 🤖 AI Collaboration Workflow
-To meet the assignment guidelines, this project was developed by experimenting with AI tools like Cursor and GitHub Copilot. 
-* **Drafting:** Used natural language prompts to quickly set up the basic HTML structure and responsive CSS layout.
-* **Troubleshooting:** Worked with the AI to patch memory leaks (clearing overlapping `setInterval` timers), fix boundary clipping math in the mini-game, and write backward-compatibility checks for old local storage data.
-* **Feature Integration:** Collaborated with the AI to generate the logic for the interactive scroll elements and evolve a static project description into a fully playable, data-persistent Javascript mini-game.
+## 🎮 Featured Project: Debug Defender Pro
+
+A high-speed, reflex-based mini-game built as the centerpiece of this portfolio.
+The goal is simple: catch the moving bug as fast as you can before the 15-second
+timer runs out — but the bug gets faster as your score climbs.
+
+### Features
+
+| Feature | Description |
+|---|---|
+| **Dynamic Difficulty** | Bug speed scales with your score for a fair but challenging experience |
+| **Global Leaderboard** | Real-time top 5 high scores powered by Supabase |
+| **Light / Dark Mode** | Clean, minimalist UI with a toggle for both themes |
+| **Responsive Design** | Mobile-first layout that adapts across screen sizes |
+| **Data Persistence** | Scores are saved to a cloud database after every session |
+| **Smooth Animations** | CSS transitions and clean JavaScript event handling throughout |
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend:** HTML5, Modern CSS (Flexbox / Grid), Vanilla JavaScript
+- **Backend / Database:** Supabase (PostgreSQL)
+- **Integrations:** EmailJS (contact form)
+- **Hosting / Deployment:** Netlify
+
+---
+
+## 🤖 AI-Assisted Development Workflow
+
+This project was built using an iterative, AI-assisted approach to meet
+the course assignment guidelines and explore modern development tools.
+
+- **Code Generation:** Core game engine, UI logic, and database integration
+  were architected with the help of **Gemini AI**.
+- **Prompt Refinement:** Structural prompts, logic flows, and feature specs
+  were refined using **Claude AI** to keep the code modular, readable, and
+  aligned with professional standards.
+- **Tooling:** Experimented with **Cursor** and **GitHub Copilot** for
+  drafting HTML structure, responsive CSS, and JavaScript logic.
+- **Troubleshooting:** Used AI assistance to patch memory leaks (overlapping
+  `setInterval` timers), fix boundary clipping in the mini-game, and add
+  backward-compatibility checks for old localStorage data.
+- **Architecture:** Follows a *Modular Engine* pattern, keeping game logic
+  cleanly separated from portfolio UI components.
+
+---
 
 ## 📈 Version Control
-This project uses Git and GitHub to track progress. I used semantic commit messages (like `feat:`, `fix:`, `style:`, and `perf:`) to keep my update history organized for grading evaluation.
+
+This project uses **Git and GitHub** for progress tracking.
+Commits follow semantic conventions for clear, gradable history:
+
+| Prefix | Purpose |
+|---|---|
+| `feat:` | New features |
+| `fix:` | Bug fixes |
+| `style:` | UI / formatting changes |
+| `perf:` | Performance improvements |
+
+---
+
+## ⚙️ Setup & Deployment
+
+### Prerequisites
+
+- A [Supabase](https://supabase.com/) account and project
+- An [EmailJS](https://www.emailjs.com/) account for the contact form
+- A [Netlify](https://www.netlify.com/) account for hosting
+
+### Environment Variables
+
+Sensitive credentials are managed via Netlify environment variables.
+Set the following in your Netlify dashboard before deploying:
+
+```
+SUPABASE_URL
+SUPABASE_ANON_KEY
+EMAILJS_SERVICE_ID
+EMAILJS_TEMPLATE_ID
+EMAILJS_PUBLIC_KEY
+```
+
+> The `netlify.toml` file automatically generates `env-config.js`
+> during the build process using these variables.
+
+
+---
+
+## 🗄️ Database Schema
+
+The leaderboard relies on a `game_leaderboard` table in Supabase:
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `int8` | Primary key |
+| `player_name` | `text` | Player's entered name |
+| `score` | `int8` | Final score from the session |
+| `created_at` | `timestamp` | Auto-generated on insert |
+
+---
+
+## 📬 Contact
+
+Developed by **Emmanuel John P. Bernal**
+4th-Year BSCS Student — DMMMSU - SLUC
+
+[![GitHub](https://img.shields.io/badge/GitHub-zitch21-181717?style=flat&logo=github)](https://github.com/zitch21)
+[![Facebook](https://img.shields.io/badge/Facebook-johnjohn0521-1877F2?style=flat&logo=facebook)](https://www.facebook.com/johnjohn0521/)
