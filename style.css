@@ -8,6 +8,7 @@
     --tag-color: #495057;
     --shadow-color: rgba(0, 0, 0, 0.05);
     --input-focus-bg: #ffffff;
+    --nav-blur-bg: rgba(248, 249, 250, 0.85);
 }
 
 /* Dark Mode Overrides (Black & Golden-Yellow) */
@@ -20,6 +21,13 @@
     --tag-color: #a0a0a0;
     --shadow-color: rgba(255, 204, 0, 0.03);
     --input-focus-bg: #1a1a1a;
+    --nav-blur-bg: rgba(18, 18, 18, 0.85);
+}
+
+/* Enable Native Smooth Scrolling Across Anchor Nodes */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Protects section headings from sticky nav clipping */
 }
 
 * {
@@ -28,7 +36,7 @@
     padding: 0;
 }
 
-body, .skill-category, header, footer, .theme-btn, .name-input, .game-btn, .avatar-container {
+body, .skill-category, header, footer, .theme-btn, .name-input, .game-btn, .avatar-container, .navbar, .nav-links a {
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
                 color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
                 border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -49,17 +57,93 @@ body {
     padding: 2rem 1rem;
 }
 
-/* Header Flex Content Alignment */
+/* =========================================
+   STICKY STYLISH NAVIGATION BAR
+   ========================================= */
+.navbar {
+    position: sticky;
+    top: 0;
+    background: var(--nav-blur-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+    opacity: 1;
+}
+
+.theme-btn {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.theme-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+/* =========================================
+   HEADER CENTERING & ENLARGEMENT
+   ========================================= */
 .header-content {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: 1.25rem;
 }
 
 header {
     border-bottom: 1px solid var(--border-color);
-    padding: 5rem 0 2.5rem 0;
+    padding: 4rem 0 3rem 0;
 }
 
 header h1 {
@@ -69,10 +153,18 @@ header h1 {
 }
 
 .subtitle {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-top: 0.25rem;
+    font-size: 1.25rem;
+}
+
+.school-tag {
     color: var(--accent-color);
+    font-size: 0.95rem;
     font-weight: 500;
-    margin-top: 0.5rem;
-    font-size: 1.1rem;
+    margin-top: -0.5rem;
+    opacity: 0.9;
 }
 
 section {
@@ -149,29 +241,6 @@ h2 {
     color: var(--accent-color);
 }
 
-.theme-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-
-.theme-btn:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    transform: scale(1.05);
-}
-
 footer {
     text-align: center;
     padding: 3rem 2rem;
@@ -207,9 +276,10 @@ footer {
     color: var(--accent-color);
 }
 
+/* BUG FIX: Chromatic strings synchronized to prevent layered hover offsets */
 #my-name::before,
 #my-name::after {
-    content: "Emmanuel John P. Bernal";
+    content: "Hi! I'm Emmanuel John P. Bernal";
     position: absolute;
     top: 0;
     left: 0;
@@ -232,17 +302,17 @@ footer {
 }
 
 /* =========================================
-   AVATAR PROFILE STYLING
+   AVATAR MODULAR EXPANSION (180px)
    ========================================= */
 .avatar-container {
     position: relative;
-    width: 130px;
-    height: 130px;
+    width: 180px; /* Scaled up from 130px */
+    height: 180px;
     border-radius: 50%;
     background: var(--card-bg);
-    padding: 4px;
+    padding: 5px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 0 6px 16px var(--shadow-color);
     transform: scale(1) rotate(0deg);
     will-change: transform, box-shadow, border-color;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
@@ -259,9 +329,30 @@ footer {
 }
 
 .avatar-container:hover {
-    transform: scale(1.04) rotate(2deg);
+    transform: scale(1.05) rotate(2deg);
     border-color: var(--accent-color);
-    box-shadow: 0 8px 24px var(--shadow-color);
+    box-shadow: 0 12px 28px var(--shadow-color);
+}
+
+/* =========================================
+   SOCIAL MEDIA VECTOR HOVER LINK BUTTONS
+   ========================================= */
+.social-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.social-icon {
+    color: var(--text-color);
+    opacity: 0.6;
+    transition: color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.social-icon:hover {
+    color: var(--accent-color);
+    opacity: 1;
+    transform: translateY(-2px);
 }
 
 /* =========================================
