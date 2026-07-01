@@ -15,6 +15,7 @@ const gameSupabase = getSupabaseClient();
 // --- Game Target Node Handlers ---
 const startBtn = document.getElementById('start-game-btn');
 const restartBtn = document.getElementById('restart-game-btn');
+const mainMenuBtn = document.getElementById('main-menu-btn');
 const startScreen = document.getElementById('start-screen');
 const playScreen = document.getElementById('play-screen');
 const endScreen = document.getElementById('end-screen');
@@ -160,6 +161,14 @@ function endGame() {
     }
 }
 
+function goToMainMenu() {
+    if (playScreen) playScreen.style.display = 'none';
+    if (endScreen) endScreen.style.display = 'none';
+    if (startScreen) startScreen.style.display = 'flex';
+    updatePersonalStatsUI();
+    updateLeaderboardUI();
+}
+
 function moveBug() {
     clearTimeout(bugTimeout);
     if (!isPlaying || !bug || !gameArea) return;
@@ -208,6 +217,24 @@ if (restartBtn) {
         } finally {
             isSaving = false;
             startGame();
+        }
+    });
+}
+
+if (mainMenuBtn) {
+    mainMenuBtn.addEventListener('click', async () => {
+        if (isSaving) return;
+        isSaving = true;
+
+        try {
+            if (score > 0 && nameInput) {
+                await saveScore(score, nameInput.value);
+            }
+        } catch (err) {
+            console.error("Engine Menu Transition Interrupted:", err.message);
+        } finally {
+            isSaving = false;
+            goToMainMenu();
         }
     });
 }
