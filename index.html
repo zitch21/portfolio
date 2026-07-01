@@ -13,7 +13,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="env-config.js"></script>
+    <script>
+  // Dynamic runtime injection safe for Vercel configurations
+  window.env = {
+    SUPABASE_URL: "<%= process.env.SUPABASE_URL %>" || "https://rbeqfojzlxrkjgiutlms.supabase.co",
+    SUPABASE_ANON_KEY: "<%= process.env.SUPABASE_ANON_KEY %>" || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiZXFmb2p6bHhya2pnaXV0bG1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTMxODIsImV4cCI6MjA5ODI4OTE4Mn0.3OzaN8ynDTMimb6Jtx_HQiQmRFc1GIWrEyUvTSeYD5YYOUR_LOCAL_FALLBACK_KEY",
+    EMAILJS_SERVICE_ID: "<%= process.env.EMAILJS_SERVICE_ID %>",
+    EMAILJS_TEMPLATE_ID: "<%= process.env.EMAILJS_TEMPLATE_ID %>",
+    EMAILJS_PUBLIC_KEY: "<%= process.env.EMAILJS_PUBLIC_KEY %>"
+  };
+    </script>
     <script src="game.js" defer></script>
 </head>
 <body>
