@@ -37,7 +37,7 @@
     <header id="top">
         <div class="container header-content">
             <div class="avatar-container">
-                <img src="stylized_profile_avatar.png" alt="EJ" class="profile-avatar" onerror="this.style.opacity='0'; this.nextElementSibling.style.display='flex';">
+                <img src="stylized_profile_avatar.png" alt="EJ" class="profile-avatar" onerror="this.style.opacity='0'; this.style.pointerEvents='none'; this.nextElementSibling.style.display='flex';">
                 <div class="avatar-fallback">EJ</div>
             </div>
             
@@ -64,7 +64,7 @@
     <main class="container">
         <section id="about" class="fade-section">
             <h2>About Me</h2>
-            <p>I'm a 4th-year Computer Science student based in La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
+            <p>I'm a 4th-year Computer Science student based in Tubao, La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
         </section>
 
         <section id="projects" class="fade-section">
@@ -95,7 +95,7 @@
                                 <span>Score: <span id="score">0</span> <span style="font-size:0.7rem; opacity:0.7">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
                             </div>
-                            <div id="bug" class="bug" draggable="false">🐛</div>
+                            <div id="bug" class="bug" draggable="false" tabindex="0" role="button" aria-label="Squash the bug">🐛</div>
                         </div>
                         
                         <div id="end-screen" class="screen-flex" style="display: none;">
@@ -147,7 +147,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
+        <p id="footer-copyright">&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
     </footer>
 
     <script>
@@ -195,6 +195,12 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
+        // --- Keep footer copyright year current automatically ---
+        const footerCopyright = document.getElementById('footer-copyright');
+        if (footerCopyright) {
+            footerCopyright.innerHTML = footerCopyright.innerHTML.replace('2026', new Date().getFullYear());
+        }
+
         // --- Hardware-Accelerated Typewriter Sequence (Glitch Logic Removed) ---
         const nameEl = document.getElementById('my-name');
         const targetText = "Hi! I'm Emmanuel John Bernal";
@@ -241,17 +247,37 @@
                         message: inputMessage
                     });
 
-                    const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
+                    // Use allSettled instead of all so one failing step doesn't
+                    // hide the fact that the other one succeeded — this avoids
+                    // the user resubmitting and creating a duplicate DB row or
+                    // duplicate email for the part that already went through.
+                    const [supabaseResult, emailjsResult] = await Promise.allSettled([supabasePromise, emailjsPromise]);
 
-                    if (supabaseResult.error) throw supabaseResult.error;
+                    const dbOk = supabaseResult.status === 'fulfilled' && !supabaseResult.value.error;
+                    const emailOk = emailjsResult.status === 'fulfilled';
 
-                    formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
-                    formStatus.style.color = "var(--accent-color)";
+                    if (dbOk && emailOk) {
+                        formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
+                        formStatus.style.color = "var(--accent-color)";
+                        contactForm.reset();
+                    } else if (dbOk && !emailOk) {
+                        console.error('Email send failed:', emailjsResult.reason);
+                        formStatus.textContent = "✅ Message received. (Email confirmation didn't go through, but we have your message.)";
+                        formStatus.style.color = "var(--accent-color)";
+                        contactForm.reset();
+                    } else if (!dbOk && emailOk) {
+                        console.error('DB insert failed:', supabaseResult.status === 'fulfilled' ? supabaseResult.value.error : supabaseResult.reason);
+                        formStatus.textContent = "⚠️ Email sent, but we couldn't save your message. Please also try again later.";
+                        formStatus.style.color = "#ff4d4d";
+                    } else {
+                        console.error('Submission failed:', supabaseResult.reason || (supabaseResult.value && supabaseResult.value.error), emailjsResult.reason);
+                        formStatus.textContent = "❌ Submission failed. Please try again in a moment.";
+                        formStatus.style.color = "#ff4d4d";
+                    }
                     formStatus.style.display = "block";
-                    contactForm.reset();
                 } catch (err) {
                     console.error('Submission Processing Failure:', err.message || err);
-                    formStatus.textContent = "❌ Submission failed. Verify your network or dashboard credentials.";
+                    formStatus.textContent = "❌ Submission failed. Please try again in a moment.";
                     formStatus.style.color = "#ff4d4d";
                     formStatus.style.display = "block";
                 } finally {

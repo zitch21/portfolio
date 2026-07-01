@@ -2,12 +2,19 @@
  * Debug Defender: Pro - Isolated Modular Game Engine
  */
 
-// Initialize runtime variables by tapping directly into the shared page handshake
+// Initialize runtime variables by tapping directly into the shared page handshake.
+// Wrapped in try/catch so a missing/broken client (e.g. env-config.js failed to
+// load) can't crash this whole script and take the game itself down with it.
 const getSupabaseClient = () => {
-    if (window.supabaseInstance) return window.supabaseInstance;
-    const URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-    const KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
-    return supabase.createClient(URL, KEY);
+    try {
+        if (window.supabaseInstance) return window.supabaseInstance;
+        const URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
+        const KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+        return supabase.createClient(URL, KEY);
+    } catch (err) {
+        console.error("Supabase client init failed:", err.message);
+        return null;
+    }
 };
 
 const gameSupabase = getSupabaseClient();
@@ -33,12 +40,22 @@ let timeLeft = 15;
 let gameInterval;
 let bugTimeout; 
 let isPlaying = false;
-let isSaving = false; 
+let isSaving = false;
+// Tracked as a real variable (not read back out of the DOM) so a failed
+// leaderboard fetch can't leave endGame() comparing against stale text.
+let currentBest = 0;
 
 async function updateLeaderboardUI() {
     if (!startLeaderboard) return;
     startLeaderboard.innerHTML = '';
-    
+
+    if (!gameSupabase) {
+        const errorLi = document.createElement('li');
+        errorLi.textContent = 'Leaderboard unavailable';
+        startLeaderboard.appendChild(errorLi);
+        return;
+    }
+
     try {
         const { data, error } = await gameSupabase
             .from('game_leaderboard')
@@ -52,12 +69,14 @@ async function updateLeaderboardUI() {
             const emptyLi = document.createElement('li');
             emptyLi.textContent = 'No scores yet!';
             startLeaderboard.appendChild(emptyLi);
+            currentBest = 0;
             if (currentBestDisplay) currentBestDisplay.textContent = '0';
             return;
         }
-        
-        if (currentBestDisplay) currentBestDisplay.textContent = data[0].score;
-        
+
+        currentBest = data[0].score;
+        if (currentBestDisplay) currentBestDisplay.textContent = currentBest;
+
         data.forEach(entry => {
             const li = document.createElement('li');
             li.textContent = `${entry.player_name}: ${entry.score}`;
@@ -68,11 +87,17 @@ async function updateLeaderboardUI() {
         const errorLi = document.createElement('li');
         errorLi.textContent = 'Failed to load scores';
         startLeaderboard.appendChild(errorLi);
+        // Don't overwrite currentBest here — keep whatever the last
+        // successful fetch gave us rather than silently resetting it.
     }
 }
 
 async function saveScore(newScore, playerName) {
     if (newScore === 0) return;
+    if (!gameSupabase) {
+        console.error("Score Save Error: no database connection available");
+        throw new Error("No database connection available");
+    }
     const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
     
     try {
@@ -127,7 +152,6 @@ function endGame() {
 
     if (score > 0) {
         if (nameInput) nameInput.style.display = 'block';
-        const currentBest = parseInt(currentBestDisplay ? currentBestDisplay.textContent : 0) || 0;
         if (score > currentBest) {
             if (endMessage) endMessage.textContent = "🏆 New High Score!";
         } else {
@@ -156,17 +180,30 @@ function moveBug() {
     bugTimeout = setTimeout(moveBug, speed);
 }
 
+function squashBug() {
+    if (!isPlaying) return;
+    score++;
+    if (scoreDisplay) scoreDisplay.textContent = score;
+
+    bug.style.transform = 'scale(0.3)';
+    setTimeout(() => { if (bug) bug.style.transform = 'scale(1)'; }, 100);
+
+    moveBug();
+}
+
 if (bug) {
     bug.addEventListener('pointerdown', (e) => {
-        if (!isPlaying) return;
-        e.preventDefault(); 
-        score++;
-        if (scoreDisplay) scoreDisplay.textContent = score;
-        
-        bug.style.transform = 'scale(0.3)';
-        setTimeout(() => { if (bug) bug.style.transform = 'scale(1)'; }, 100);
+        e.preventDefault();
+        squashBug();
+    });
 
-        moveBug(); 
+    // Keyboard accessibility: allow squashing the bug via Enter/Space
+    // when it's focused, not just pointer/touch input.
+    bug.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            squashBug();
+        }
     });
 }
 
@@ -176,18 +213,23 @@ if (restartBtn) {
     restartBtn.addEventListener('click', async () => {
         if (isSaving) return;
         isSaving = true;
+        restartBtn.disabled = true;
+        const originalLabel = restartBtn.textContent;
+        restartBtn.textContent = 'Saving...';
 
         try {
             if (score > 0 && nameInput) {
                 await saveScore(score, nameInput.value);
             }
-            startGame();
         } catch (err) {
-            console.error("Engine Restart Interrupted:", err.message);
-            // Flash a dynamic UI hint on failure if required; reset lock state safely
-            if (endMessage) endMessage.textContent = "⚠️ Sync Error. Retrying...";
+            console.error("Score save failed, continuing without blocking restart:", err.message);
+            // Don't leave the player stuck on the end screen just because the
+            // leaderboard write failed — always let them keep playing.
         } finally {
+            restartBtn.disabled = false;
+            restartBtn.textContent = originalLabel;
             isSaving = false;
+            startGame();
         }
     });
 }
