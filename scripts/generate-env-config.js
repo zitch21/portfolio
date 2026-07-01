@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const outputPath = path.join(__dirname, '..', 'env-config.js');
+const outputPath = path.join(__dirname, 'env-config.js');
 
 const config = {
   SUPABASE_URL: process.env.SUPABASE_URL || 'https://rbeqfojzlxrkjgiutlms.supabase.co',

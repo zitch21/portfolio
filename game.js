@@ -181,13 +181,12 @@ if (restartBtn) {
             if (score > 0 && nameInput) {
                 await saveScore(score, nameInput.value);
             }
-            startGame();
         } catch (err) {
             console.error("Engine Restart Interrupted:", err.message);
-            // Flash a dynamic UI hint on failure if required; reset lock state safely
             if (endMessage) endMessage.textContent = "⚠️ Sync Error. Retrying...";
         } finally {
             isSaving = false;
+            startGame();
         }
     });
 }
