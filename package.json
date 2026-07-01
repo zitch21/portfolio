@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/generate-env-config.js"
+    "generate-env-config": "node scripts/generate-env-config.js",
+    "vercel-build": "node scripts/generate-env-config.js"
   }
 }
