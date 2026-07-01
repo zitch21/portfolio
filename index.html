@@ -260,10 +260,16 @@
             setTimeout(renderTypewriter, 400);
         })();
 
-        // --- Contact Form Handling ---
+        // --- Secure Contact Form Handling ---
         const contactForm = document.getElementById('contact-form');
         const formStatus = document.getElementById('form-status');
         const submitBtn = document.getElementById('submit-btn');
+
+        function sanitizeInput(str) {
+            return str.trim().replace(/[&<>"']/g, (m) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'
+            })[m]);
+        }
 
         if (contactForm) {
             contactForm.addEventListener('submit', async (e) => {
@@ -272,23 +278,32 @@
                 submitBtn.textContent = 'Sending...';
                 formStatus.style.display = 'none';
 
-                const inputName = document.getElementById('user-name').value;
-                const inputEmail = document.getElementById('user-email').value;
-                const inputMessage = document.getElementById('user-message').value;
+                const inputName = sanitizeInput(document.getElementById('user-name').value);
+                const inputEmail = sanitizeInput(document.getElementById('user-email').value);
+                const inputMessage = sanitizeInput(document.getElementById('user-message').value);
+
+                if (!inputName || !inputEmail || !inputMessage) {
+                    formStatus.textContent = "❌ All fields must contain valid text values.";
+                    formStatus.style.color = "#ff4d4d";
+                    formStatus.style.display = "block";
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                    return;
+                }
 
                 try {
                     let supabasePromise = Promise.resolve({ data: null, error: null });
-                    if (window.supabaseInstance && (window.env && window.env.SUPABASE_URL)) {
+                    if (window.supabaseInstance && window.env?.SUPABASE_URL && window.env.SUPABASE_URL !== 'https://your-fallback-development-url.supabase.co') {
                         supabasePromise = window.supabaseInstance
                             .from('contact_submissions')
                             .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
                     }
 
-                    const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "dummy_service";
-                    const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "dummy_template";
+                    const ejsService = window.env?.EMAILJS_SERVICE_ID;
+                    const ejsTemplate = window.env?.EMAILJS_TEMPLATE_ID;
 
                     let emailjsPromise = Promise.resolve({ status: 'skipped' });
-                    if (typeof emailjs !== 'undefined' && emailjs.send && (window.env && window.env.EMAILJS_PUBLIC_KEY)) {
+                    if (typeof emailjs !== 'undefined' && emailjs.send && window.env?.EMAILJS_PUBLIC_KEY) {
                         emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
                             name: inputName,
                             email: inputEmail,
@@ -296,7 +311,7 @@
                         });
                     }
 
-                    const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
+                    const [supabaseResult] = await Promise.all([supabasePromise, emailjsPromise]);
 
                     if (supabaseResult && supabaseResult.error) throw supabaseResult.error;
 
