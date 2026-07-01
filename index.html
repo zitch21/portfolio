@@ -94,15 +94,27 @@
                     <p class="game-tip">The bugs get faster the more you squash. 15 seconds. Go!</p>
                     
                     <div id="game-container" class="game-area">
-                        <div id="start-screen" class="screen-flex">
-                            <button id="start-game-btn" class="game-btn start-game-btn">Start Debugging</button>
-                            <div class="leaderboard-container">
-                                <h4>Global Top Debuggers</h4>
-                                <ol id="start-leaderboard" class="leaderboard-list"></ol>
+                        <div id="start-screen" class="screen-flex start-screen">
+                            <div class="game-tabs" role="tablist" aria-label="Debug Defender start options">
+                                <button id="profile-tab" role="tab" aria-controls="profile-panel" aria-selected="true" tabindex="0" class="tab-btn active-tab">Profile</button>
+                                <button id="leaderboard-tab" role="tab" aria-controls="leaderboard-panel" aria-selected="false" tabindex="-1" class="tab-btn">Leaderboard</button>
+                            </div>
+
+                            <div id="profile-panel" class="tab-panel active-panel" role="tabpanel" aria-labelledby="profile-tab">
+                                <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off" aria-label="Player nickname">
+                                <p class="personal-best">Personal Best: <span id="personal-best">0</span></p>
+                                <button id="start-game-btn" class="game-btn start-game-btn">Start Debugging</button>
+                            </div>
+
+                            <div id="leaderboard-panel" class="tab-panel" role="tabpanel" aria-labelledby="leaderboard-tab" hidden>
+                                <div class="leaderboard-container">
+                                    <h4>Global Top Debuggers</h4>
+                                    <ol id="start-leaderboard" class="leaderboard-list"></ol>
+                                </div>
                             </div>
                         </div>
                         
-                        <div id="play-screen" class="game-play-screen">
+                        <div id="play-screen" class="game-play-screen screen-hidden">
                             <div class="game-header">
                                 <span>Score: <span id="score">0</span> <span class="best-score">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
@@ -110,12 +122,9 @@
                             <div id="bug" class="bug" draggable="false">🐛</div>
                         </div>
                         
-                        <div id="end-screen" class="screen-flex game-end-screen">
+                        <div id="end-screen" class="screen-flex game-end-screen screen-hidden">
                             <h3 id="end-message" class="game-end-title">Time's Up!</h3>
                             <p class="game-end-summary">Bugs Squashed: <span id="final-score">0</span></p>
-                            
-                            <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off">
-                            
                             <button id="restart-game-btn" class="game-btn">Save & Play Again</button>
                         </div>
                     </div>

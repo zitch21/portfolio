@@ -22,6 +22,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // --- Game Target Node Handlers ---
     const startBtn = document.getElementById('start-game-btn');
     const restartBtn = document.getElementById('restart-game-btn');
+    const profileTab = document.getElementById('profile-tab');
+    const leaderboardTab = document.getElementById('leaderboard-tab');
+    const profilePanel = document.getElementById('profile-panel');
+    const leaderboardPanel = document.getElementById('leaderboard-panel');
     const startScreen = document.getElementById('start-screen');
     const playScreen = document.getElementById('play-screen');
     const endScreen = document.getElementById('end-screen');
@@ -29,6 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay = document.getElementById('score');
     const timeDisplay = document.getElementById('time');
     const currentBestDisplay = document.getElementById('current-best');
+    const personalBestDisplay = document.getElementById('personal-best');
     const finalScoreDisplay = document.getElementById('final-score');
     const endMessage = document.getElementById('end-message');
     const gameArea = document.getElementById('game-container');
@@ -38,9 +43,10 @@ window.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let timeLeft = 15;
     let gameInterval;
-    let bugTimeout; 
+    let bugTimeout;
     let isPlaying = false;
-    let isSaving = false; 
+    let isSaving = false;
+    let personalBest = 0;
 
     async function updateLeaderboardUI() {
         if (!startLeaderboard) return;
@@ -51,6 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
             li.textContent = 'Scores unavailable';
             startLeaderboard.appendChild(li);
             if (currentBestDisplay) currentBestDisplay.textContent = '0';
+            updatePersonalBest();
             return;
         }
         
@@ -68,6 +75,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 emptyLi.textContent = 'No scores yet!';
                 startLeaderboard.appendChild(emptyLi);
                 if (currentBestDisplay) currentBestDisplay.textContent = '0';
+                updatePersonalBest();
                 return;
             }
             
@@ -83,6 +91,8 @@ window.addEventListener('DOMContentLoaded', () => {
             const errorLi = document.createElement('li');
             errorLi.textContent = 'Failed to load scores';
             startLeaderboard.appendChild(errorLi);
+        } finally {
+            updatePersonalBest();
         }
     }
 
@@ -104,23 +114,41 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updatePersonalBest() {
+        if (personalBestDisplay) {
+            personalBestDisplay.textContent = personalBest;
+        }
+    }
+
+    function showScreen(screen) {
+        const screens = [startScreen, playScreen, endScreen];
+        screens.forEach(el => {
+            if (!el) return;
+            el.classList.add('screen-hidden');
+            el.setAttribute('aria-hidden', 'true');
+        });
+
+        if (screen) {
+            screen.classList.remove('screen-hidden');
+            screen.setAttribute('aria-hidden', 'false');
+        }
+    }
+
     function startGame() {
-        clearInterval(gameInterval); 
+        clearInterval(gameInterval);
         clearTimeout(bugTimeout);
         
         score = 0;
         timeLeft = 15;
         isPlaying = true;
-        isSaving = false; 
+        isSaving = false;
         
         if (scoreDisplay) scoreDisplay.textContent = score;
         if (timeDisplay) timeDisplay.textContent = timeLeft;
         if (nameInput) nameInput.value = '';
+        if (personalBestDisplay) personalBestDisplay.textContent = personalBest;
 
-        if (startScreen) startScreen.style.display = 'none';
-        if (endScreen) endScreen.style.display = 'none';
-        if (playScreen) playScreen.style.display = 'block';
-
+        showScreen(playScreen);
         moveBug();
 
         gameInterval = setInterval(() => {
@@ -135,24 +163,24 @@ window.addEventListener('DOMContentLoaded', () => {
     function endGame() {
         isPlaying = false;
         clearInterval(gameInterval);
-        clearTimeout(bugTimeout); 
+        clearTimeout(bugTimeout);
         
-        if (playScreen) playScreen.style.display = 'none';
-        if (endScreen) endScreen.style.display = 'flex';
         if (finalScoreDisplay) finalScoreDisplay.textContent = score;
-
-        if (score > 0) {
-            if (nameInput) nameInput.style.display = 'block';
-            const currentBest = parseInt(currentBestDisplay ? currentBestDisplay.textContent : 0) || 0;
-            if (score > currentBest) {
-                if (endMessage) endMessage.textContent = "🏆 New High Score!";
-            } else {
-                if (endMessage) endMessage.textContent = "Time's Up!";
-            }
+        const currentBest = parseInt(currentBestDisplay ? currentBestDisplay.textContent : 0) || 0;
+        if (score > currentBest) {
+            if (endMessage) endMessage.textContent = "🏆 New High Score!";
+        } else if (score > 0) {
+            if (endMessage) endMessage.textContent = "Time's Up!";
         } else {
-            if (nameInput) nameInput.style.display = 'none';
             if (endMessage) endMessage.textContent = "Try again!";
         }
+
+        if (score > personalBest) {
+            personalBest = score;
+            updatePersonalBest();
+        }
+
+        showScreen(endScreen);
     }
 
     function moveBug() {
@@ -175,14 +203,55 @@ window.addEventListener('DOMContentLoaded', () => {
     if (bug) {
         bug.addEventListener('pointerdown', (e) => {
             if (!isPlaying) return;
-            e.preventDefault(); 
+            e.preventDefault();
             score++;
             if (scoreDisplay) scoreDisplay.textContent = score;
             
             bug.style.transform = 'scale(0.3)';
             setTimeout(() => { if (bug) bug.style.transform = 'scale(1)'; }, 100);
 
-            moveBug(); 
+            moveBug();
+        });
+    }
+
+    function switchTab(tab) {
+        if (!profileTab || !leaderboardTab || !profilePanel || !leaderboardPanel) return;
+
+        const active = tab === 'leaderboard' ? leaderboardTab : profileTab;
+        const inactive = tab === 'leaderboard' ? profileTab : leaderboardTab;
+        const showPanel = tab === 'leaderboard' ? leaderboardPanel : profilePanel;
+        const hidePanel = tab === 'leaderboard' ? profilePanel : leaderboardPanel;
+
+        active.classList.add('active-tab');
+        active.setAttribute('aria-selected', 'true');
+        active.tabIndex = 0;
+        inactive.classList.remove('active-tab');
+        inactive.setAttribute('aria-selected', 'false');
+        inactive.tabIndex = -1;
+
+        showPanel.hidden = false;
+        showPanel.classList.add('active-panel');
+        hidePanel.hidden = true;
+        hidePanel.classList.remove('active-panel');
+    }
+
+    if (profileTab) {
+        profileTab.addEventListener('click', () => switchTab('profile'));
+        profileTab.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                event.preventDefault();
+                switchTab('leaderboard');
+            }
+        });
+    }
+
+    if (leaderboardTab) {
+        leaderboardTab.addEventListener('click', () => switchTab('leaderboard'));
+        leaderboardTab.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                event.preventDefault();
+                switchTab('profile');
+            }
         });
     }
 
@@ -208,6 +277,8 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Automatically populate scores on initialization
+    // Initialize UI state and leaderboard
+    showScreen(startScreen);
     updateLeaderboardUI();
+    switchTab('profile');
 });

@@ -224,7 +224,16 @@ textarea:focus-visible {
     }
 
     .game-area {
-        height: 240px;
+        height: 260px;
+    }
+
+    .game-tabs {
+        gap: 0.35rem;
+    }
+
+    .tab-btn {
+        font-size: 0.85rem;
+        padding: 9px 12px;
     }
 }
 
@@ -624,20 +633,107 @@ footer::before {
 }
 
 .start-game-btn {
-    margin-bottom: 10px;
+    margin-top: 0.75rem;
 }
 
-.game-play-screen {
-    display: none;
+.screen-hidden {
+    display: none !important;
 }
 
+.game-play-screen,
 .game-end-screen {
-    display: none;
+    display: flex;
 }
 
 .game-end-title {
     margin-bottom: 5px;
     color: var(--accent-color);
+}
+
+.start-screen {
+    gap: 0.85rem;
+    min-height: 100%;
+}
+
+.game-tabs {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    flex: 1 1 140px;
+    min-width: 120px;
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-btn:hover,
+.tab-btn:focus-visible {
+    background: rgba(0, 168, 184, 0.15);
+    border-color: var(--accent-color);
+}
+
+.active-tab {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    border-color: var(--accent-color);
+}
+
+.tab-panel {
+    display: none;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+}
+
+.tab-panel.active-panel {
+    display: flex;
+}
+
+.personal-best {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--tag-color);
+}
+
+.leaderboard-container {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--tag-color);
+    width: 100%;
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    gap: 0.6rem;
+    justify-items: center;
+}
+
+.leaderboard-list li {
+    background: var(--border-color);
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+    max-width: 220px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .game-end-summary {
