@@ -37,7 +37,7 @@
     <header id="top">
         <div class="container header-content">
             <div class="avatar-container">
-                <img src="stylized_profile_avatar.png" alt="EJ" class="profile-avatar" onerror="this.style.opacity='0'; this.style.pointerEvents='none'; this.nextElementSibling.style.display='flex';">
+                <img src="stylized_profile_avatar.png" alt="EJ" class="profile-avatar" onerror="this.style.opacity='0'; this.nextElementSibling.style.display='flex';">
                 <div class="avatar-fallback">EJ</div>
             </div>
             
@@ -64,7 +64,7 @@
     <main class="container">
         <section id="about" class="fade-section">
             <h2>About Me</h2>
-            <p>I'm a 4th-year Computer Science student based in Tubao, La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
+            <p>I'm a 4th-year Computer Science student based in La Union. I'm a beginner programmer who really enjoys building things and trying out new ideas. Lately, I've been exploring how AI tools like Cursor and GitHub Copilot can help me write code faster and learn as I go. I like keeping things simple, figuring out how things work, and turning basic concepts into actual working projects.</p>
         </section>
 
         <section id="projects" class="fade-section">
@@ -95,7 +95,7 @@
                                 <span>Score: <span id="score">0</span> <span style="font-size:0.7rem; opacity:0.7">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
                             </div>
-                            <div id="bug" class="bug" draggable="false" tabindex="0" role="button" aria-label="Squash the bug">🐛</div>
+                            <div id="bug" class="bug" draggable="false">🐛</div>
                         </div>
                         
                         <div id="end-screen" class="screen-flex" style="display: none;">
@@ -147,19 +147,38 @@
     </main>
 
     <footer>
-        <p id="footer-copyright">&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
+        <p>&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
     </footer>
 
     <script>
-        // --- Shared Supabase Instance Instantiation ---
-        const DB_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-        const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
-        const globalSupabase = supabase.createClient(DB_URL, DB_KEY);
-        window.supabaseInstance = globalSupabase;
+        // --- Shared Supabase Instance Instantiation (defensive) ---
+        let globalSupabase = null;
+        try {
+            const DB_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
+            const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+                globalSupabase = supabase.createClient(DB_URL, DB_KEY);
+                window.supabaseInstance = globalSupabase;
+            } else {
+                console.warn('Supabase SDK unavailable; continuing without DB integration.');
+                window.supabaseInstance = null;
+            }
+        } catch (err) {
+            console.error('Supabase initialization failed:', err);
+            window.supabaseInstance = null;
+        }
 
-        // --- EmailJS Setup Initialization ---
-        const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "YOUR_LOCAL_EMAILJS_PUBLIC_KEY";
-        emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+        // --- EmailJS Setup Initialization (defensive) ---
+        try {
+            const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "YOUR_LOCAL_EMAILJS_PUBLIC_KEY";
+            if (typeof emailjs !== 'undefined' && emailjs.init) {
+                emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+            } else {
+                console.warn('EmailJS SDK unavailable; skipping email init.');
+            }
+        } catch (err) {
+            console.error('EmailJS initialization failed:', err);
+        }
 
         // --- Theme Toggle Logic ---
         const toggleBtn = document.getElementById('theme-toggle');
@@ -195,27 +214,24 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Keep footer copyright year current automatically ---
-        const footerCopyright = document.getElementById('footer-copyright');
-        if (footerCopyright) {
-            footerCopyright.innerHTML = footerCopyright.innerHTML.replace('2026', new Date().getFullYear());
-        }
+        // --- Hardware-Accelerated Typewriter Sequence (safe) ---
+        (function runTypewriterSafe() {
+            const nameEl = document.getElementById('my-name');
+            if (!nameEl) return;
+            const targetText = "Hi! I'm Emmanuel John Bernal";
+            let charIndex = 0;
 
-        // --- Hardware-Accelerated Typewriter Sequence (Glitch Logic Removed) ---
-        const nameEl = document.getElementById('my-name');
-        const targetText = "Hi! I'm Emmanuel John Bernal";
-        let charIndex = 0;
-
-        function renderTypewriter() {
-            if (charIndex <= targetText.length) {
-                nameEl.textContent = targetText.substring(0, charIndex);
-                charIndex++;
-                setTimeout(renderTypewriter, 70); 
-            } else {
-                setTimeout(() => nameEl.classList.add('typing-complete'), 2500); 
+            function renderTypewriter() {
+                if (charIndex <= targetText.length) {
+                    nameEl.textContent = targetText.substring(0, charIndex);
+                    charIndex++;
+                    setTimeout(renderTypewriter, 70);
+                } else {
+                    setTimeout(() => nameEl.classList.add('typing-complete'), 2500);
+                }
             }
-        }
-        setTimeout(renderTypewriter, 400);
+            setTimeout(renderTypewriter, 400);
+        })();
 
         // --- Contact Form Handling (Supabase Cloud Sync + EmailJS Alert Integration) ---
         const contactForm = document.getElementById('contact-form');
@@ -234,50 +250,36 @@
                 const inputMessage = document.getElementById('user-message').value;
 
                 try {
-                    const supabasePromise = globalSupabase
-                        .from('contact_submissions')
-                        .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
+                    let supabasePromise = Promise.resolve({ data: null, error: null });
+                    if (window.supabaseInstance) {
+                        supabasePromise = window.supabaseInstance
+                            .from('contact_submissions')
+                            .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
+                    }
 
                     const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "YOUR_LOCAL_SERVICE_ID";
                     const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "YOUR_LOCAL_TEMPLATE_ID";
-                    
-                    const emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
-                        name: inputName,
-                        email: inputEmail,
-                        message: inputMessage
-                    });
 
-                    // Use allSettled instead of all so one failing step doesn't
-                    // hide the fact that the other one succeeded — this avoids
-                    // the user resubmitting and creating a duplicate DB row or
-                    // duplicate email for the part that already went through.
-                    const [supabaseResult, emailjsResult] = await Promise.allSettled([supabasePromise, emailjsPromise]);
-
-                    const dbOk = supabaseResult.status === 'fulfilled' && !supabaseResult.value.error;
-                    const emailOk = emailjsResult.status === 'fulfilled';
-
-                    if (dbOk && emailOk) {
-                        formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
-                        formStatus.style.color = "var(--accent-color)";
-                        contactForm.reset();
-                    } else if (dbOk && !emailOk) {
-                        console.error('Email send failed:', emailjsResult.reason);
-                        formStatus.textContent = "✅ Message received. (Email confirmation didn't go through, but we have your message.)";
-                        formStatus.style.color = "var(--accent-color)";
-                        contactForm.reset();
-                    } else if (!dbOk && emailOk) {
-                        console.error('DB insert failed:', supabaseResult.status === 'fulfilled' ? supabaseResult.value.error : supabaseResult.reason);
-                        formStatus.textContent = "⚠️ Email sent, but we couldn't save your message. Please also try again later.";
-                        formStatus.style.color = "#ff4d4d";
-                    } else {
-                        console.error('Submission failed:', supabaseResult.reason || (supabaseResult.value && supabaseResult.value.error), emailjsResult.reason);
-                        formStatus.textContent = "❌ Submission failed. Please try again in a moment.";
-                        formStatus.style.color = "#ff4d4d";
+                    let emailjsPromise = Promise.resolve({ status: 'skipped' });
+                    if (typeof emailjs !== 'undefined' && emailjs.send) {
+                        emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
+                            name: inputName,
+                            email: inputEmail,
+                            message: inputMessage
+                        });
                     }
+
+                    const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
+
+                    if (supabaseResult && supabaseResult.error) throw supabaseResult.error;
+
+                    formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
+                    formStatus.style.color = "var(--accent-color)";
                     formStatus.style.display = "block";
+                    contactForm.reset();
                 } catch (err) {
-                    console.error('Submission Processing Failure:', err.message || err);
-                    formStatus.textContent = "❌ Submission failed. Please try again in a moment.";
+                    console.error('Submission Processing Failure:', err && (err.message || err));
+                    formStatus.textContent = "❌ Submission failed. Verify your network or dashboard credentials.";
                     formStatus.style.color = "#ff4d4d";
                     formStatus.style.display = "block";
                 } finally {
