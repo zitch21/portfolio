@@ -6,9 +6,10 @@
 const getSupabaseClient = () => {
     if (window.supabaseInstance) return window.supabaseInstance;
     if (typeof supabase === 'undefined' || !supabase.createClient) return null;
-    const URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-    const KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+    const URL = (window.env && window.env.SUPABASE_URL) || "https://dummy.supabase.co";
+    const KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "dummy_key";
     try {
+        if (!URL.startsWith('http')) return null;
         return supabase.createClient(URL, KEY);
     } catch (err) {
         console.warn('Unable to create Supabase client:', err);
@@ -46,13 +47,15 @@ window.addEventListener('DOMContentLoaded', () => {
     let bugTimeout;
     let isPlaying = false;
     let isSaving = false;
-    let personalBest = 0;
+    
+    // Persistent local storage initialization for personal high scores
+    let personalBest = parseInt(localStorage.getItem('dd_personal_best')) || 0;
 
     async function updateLeaderboardUI() {
         if (!startLeaderboard) return;
         startLeaderboard.innerHTML = '';
 
-        if (!gameSupabase) {
+        if (!gameSupabase || !(window.env && window.env.SUPABASE_URL)) {
             const li = document.createElement('li');
             li.textContent = 'Scores unavailable';
             startLeaderboard.appendChild(li);
@@ -98,7 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     async function saveScore(newScore, playerName) {
         if (newScore === 0) return;
-        if (!gameSupabase) return; // skip saving when no client
+        if (!gameSupabase || !(window.env && window.env.SUPABASE_URL)) return; 
         const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
         
         try {
@@ -107,10 +110,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 .insert([{ player_name: finalName, score: newScore }]);
             
             if (error) throw error;
-            await updateLeaderboardUI();
         } catch (err) {
             console.error("Score Save Error:", err && (err.message || err));
-            throw err; // Propagate up to ensure correct error lifecycle capture
+            throw err; 
+        }
+
+        // Isolated asynchronous UI update prevents write-success lockouts
+        try {
+            await updateLeaderboardUI();
+        } catch (uiErr) {
+            console.warn("Leaderboard presentation update failed post-save:", uiErr);
         }
     }
 
@@ -177,6 +186,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (score > personalBest) {
             personalBest = score;
+            localStorage.setItem('dd_personal_best', personalBest);
             updatePersonalBest();
         }
 
@@ -187,7 +197,6 @@ window.addEventListener('DOMContentLoaded', () => {
         clearTimeout(bugTimeout);
         if (!isPlaying || !bug || !gameArea) return;
 
-        // Responsive bounds protection clamping minimum layout dimensions safely
         const maxX = Math.max(10, gameArea.clientWidth - 45); 
         const maxY = Math.max(40, gameArea.clientHeight - 65); 
         const randomX = Math.floor(Math.random() * maxX) + 5; 
@@ -269,7 +278,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 startGame();
             } catch (err) {
                 console.error("Engine Restart Interrupted:", err && (err.message || err));
-                // Flash a dynamic UI hint on failure if required; reset lock state safely
                 if (endMessage) endMessage.textContent = "⚠️ Sync Error. Retrying...";
             } finally {
                 isSaving = false;

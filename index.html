@@ -13,21 +13,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script>
-  // Dynamic runtime injection safe for Vercel configurations
-  window.env = {
-    SUPABASE_URL: 'https://rbeqfojzlxrkjgiutlms.supabase.co',
-    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiZXFmb2p6bHhya2pnaXV0bG1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTMxODIsImV4cCI6MjA5ODI4OTE4Mn0.3OzaN8ynDTMimb6Jtx_HQiQmRFc1GIWrEyUvTSeYD5Y',
-    EMAILJS_SERVICE_ID: 'service_b6hmc3m',
-    EMAILJS_TEMPLATE_ID: 'template_khez39i',
-    EMAILJS_PUBLIC_KEY: 'I2raPgJS9o1Jh21Af'
-  };
-    </script>
+    
+    <script src="env-config.js"></script>
     <script src="game.js" defer></script>
 </head>
 <body>
-    <div class="caustics" aria-hidden="true"></div>
-    <div class="bubbles" id="bubbles-layer" aria-hidden="true"></div>
 
     <nav class="navbar">
         <div class="nav-container">
@@ -61,7 +51,7 @@
             <div class="social-links">
                 <a href="https://github.com/zitch21" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub Profile">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37(3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                     </svg>
                 </a>
                 <a href="https://www.facebook.com/johnjohn0521/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook Profile">
@@ -168,45 +158,16 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 | Built with Git, HTML/CSS, & Netlify Hosting</p>
+        <p>&copy; 2026 | Built with Git, HTML/CSS, & Deployment CI/CD</p>
     </footer>
 
     <script>
-        const bubblesLayer = document.getElementById('bubbles-layer');
-        if (bubblesLayer) {
-            const bubbleCount = window.innerWidth < 768 ? 7 : 10;
-            const fragment = document.createDocumentFragment();
-
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('span');
-                bubble.className = 'bubble';
-                bubble.style.left = `${Math.random() * 100}%`;
-                bubble.style.setProperty('--drift', `${(Math.random() * 24 - 12).toFixed(2)}vw`);
-                bubble.style.animationDelay = `${-Math.random() * 16}s`;
-                bubble.style.animationDuration = `${12 + Math.random() * 8}s`;
-                fragment.appendChild(bubble);
-            }
-
-            bubblesLayer.appendChild(fragment);
-
-            if ('IntersectionObserver' in window) {
-                const bubbleObserver = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => entry.target.classList.toggle('is-visible', entry.isIntersecting));
-                }, { threshold: 0.1 });
-                bubbleObserver.observe(bubblesLayer);
-            } else {
-                bubblesLayer.classList.add('is-visible');
-            }
-        }
-
-        // --- Shared Supabase Instance Instantiation (defensive) ---
-        let globalSupabase = null;
+        // --- Shared Supabase Instance Instantiation (Defensive Parsing) ---
         try {
-            const DB_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
-            const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+            const DB_URL = (window.env && window.env.SUPABASE_URL) || "https://dummy.supabase.co";
+            const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "dummy_key";
             if (typeof supabase !== 'undefined' && supabase.createClient) {
-                globalSupabase = supabase.createClient(DB_URL, DB_KEY);
-                window.supabaseInstance = globalSupabase;
+                window.supabaseInstance = supabase.createClient(DB_URL, DB_KEY);
             } else {
                 console.warn('Supabase SDK unavailable; continuing without DB integration.');
                 window.supabaseInstance = null;
@@ -216,9 +177,9 @@
             window.supabaseInstance = null;
         }
 
-        // --- EmailJS Setup Initialization (defensive) ---
+        // --- EmailJS Setup Initialization (Defensive Parsing) ---
         try {
-            const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "YOUR_LOCAL_EMAILJS_PUBLIC_KEY";
+            const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "dummy_key";
             if (typeof emailjs !== 'undefined' && emailjs.init) {
                 emailjs.init({ publicKey: EJS_PUBLIC_KEY });
             } else {
@@ -232,7 +193,25 @@
         const toggleBtn = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
         const currentTheme = document.documentElement.getAttribute('data-theme');
+        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         updateIcon(currentTheme);
+
+        const rippleTargets = document.querySelectorAll('.theme-btn, .game-btn, .project-card, .skill-category, .tab-btn, .social-icon, .nav-links a, .contact-form');
+        rippleTargets.forEach((target) => {
+            target.classList.add('ripple-target');
+            if (reducedMotionQuery.matches) return;
+
+            target.addEventListener('pointerdown', (event) => {
+                const rect = target.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = `${event.clientX - rect.left}px`;
+                ripple.style.top = `${event.clientY - rect.top}px`;
+                target.appendChild(ripple);
+                requestAnimationFrame(() => ripple.classList.add('is-visible'));
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        });
 
         toggleBtn.addEventListener('click', () => {
             let theme = document.documentElement.getAttribute('data-theme');
@@ -262,7 +241,7 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Hardware-Accelerated Typewriter Sequence (safe) ---
+        // --- Hardware-Accelerated Typewriter Sequence ---
         (function runTypewriterSafe() {
             const nameEl = document.getElementById('my-name');
             if (!nameEl) return;
@@ -281,7 +260,7 @@
             setTimeout(renderTypewriter, 400);
         })();
 
-        // --- Contact Form Handling (Supabase Cloud Sync + EmailJS Alert Integration) ---
+        // --- Contact Form Handling ---
         const contactForm = document.getElementById('contact-form');
         const formStatus = document.getElementById('form-status');
         const submitBtn = document.getElementById('submit-btn');
@@ -299,17 +278,17 @@
 
                 try {
                     let supabasePromise = Promise.resolve({ data: null, error: null });
-                    if (window.supabaseInstance) {
+                    if (window.supabaseInstance && (window.env && window.env.SUPABASE_URL)) {
                         supabasePromise = window.supabaseInstance
                             .from('contact_submissions')
                             .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
                     }
 
-                    const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "YOUR_LOCAL_SERVICE_ID";
-                    const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "YOUR_LOCAL_TEMPLATE_ID";
+                    const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "dummy_service";
+                    const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "dummy_template";
 
                     let emailjsPromise = Promise.resolve({ status: 'skipped' });
-                    if (typeof emailjs !== 'undefined' && emailjs.send) {
+                    if (typeof emailjs !== 'undefined' && emailjs.send && (window.env && window.env.EMAILJS_PUBLIC_KEY)) {
                         emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
                             name: inputName,
                             email: inputEmail,
@@ -321,7 +300,7 @@
 
                     if (supabaseResult && supabaseResult.error) throw supabaseResult.error;
 
-                    formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
+                    formStatus.textContent = "🚀 Message logged and sent successfully!";
                     formStatus.style.color = "var(--accent-color)";
                     formStatus.style.display = "block";
                     contactForm.reset();

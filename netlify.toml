@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "echo \"window.env = { SUPABASE_URL: '${SUPABASE_URL}', SUPABASE_ANON_KEY: '${SUPABASE_ANON_KEY}', EMAILJS_SERVICE_ID: '${EMAILJS_SERVICE_ID}', EMAILJS_TEMPLATE_ID: '${EMAILJS_TEMPLATE_ID}', EMAILJS_PUBLIC_KEY: '${EMAILJS_PUBLIC_KEY}' };\" > env-config.js"
+  command = "node build-env.js"
 
 [build.environment]
   SECRETS_SCAN_OMIT_PATHS = "env-config.js"
