@@ -1,8 +1,8 @@
 {
-  "name": "ej-portfolio",
+  "name": "portfolio",
   "version": "1.0.0",
-  "description": "Static portfolio with dynamic CI/CD environment injection",
+  "private": true,
   "scripts": {
-    "build": "node build-env.js"
+    "build": "node scripts/generate-env-config.js"
   }
 }

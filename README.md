@@ -30,7 +30,7 @@ timer runs out — but the bug gets faster as your score climbs.
 - **Frontend:** HTML5, Modern CSS (Flexbox / Grid), Vanilla JavaScript
 - **Backend / Database:** Supabase (PostgreSQL)
 - **Integrations:** EmailJS (contact form)
-- **Hosting / Deployment:** Netlify
+- **Hosting / Deployment:** Vercel
 
 ---
 
@@ -74,12 +74,12 @@ Commits follow semantic conventions for clear, gradable history:
 
 - A [Supabase](https://supabase.com/) account and project
 - An [EmailJS](https://www.emailjs.com/) account for the contact form
-- A [Netlify](https://www.netlify.com/) account for hosting
+- A [Vercel](https://vercel.com/) account for hosting
 
 ### Environment Variables
 
-Sensitive credentials are managed via Netlify environment variables.
-Set the following in your Netlify dashboard before deploying:
+Sensitive credentials are managed via Vercel environment variables.
+Set the following in your Vercel dashboard before deploying:
 
 ```
 SUPABASE_URL
@@ -89,8 +89,8 @@ EMAILJS_TEMPLATE_ID
 EMAILJS_PUBLIC_KEY
 ```
 
-> The `netlify.toml` file automatically generates `env-config.js`
-> during the build process using these variables.
+> The build script generates `env-config.js` during deployment
+> using these Vercel environment variables.
 
 
 ---

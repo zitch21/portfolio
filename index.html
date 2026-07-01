@@ -13,12 +13,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
     <script src="env-config.js"></script>
     <script src="game.js" defer></script>
 </head>
 <body>
-
     <nav class="navbar">
         <div class="nav-container">
             <a href="#top" class="nav-brand">EJ.</a>
@@ -51,7 +49,7 @@
             <div class="social-links">
                 <a href="https://github.com/zitch21" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub Profile">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37(3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                     </svg>
                 </a>
                 <a href="https://www.facebook.com/johnjohn0521/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook Profile">
@@ -78,43 +76,34 @@
                     <p>A personal website I built for my Web Programming class. It uses basic HTML, CSS, and JavaScript to share a bit about myself and display the coding projects I've been working on.</p>
                 </div>
                 
-                <div class="project-card game-widget">
+                <div class="project-card" style="display: flex; flex-direction: column;">
                     <h3>Debug Defender: Pro</h3>
                     <p class="tag">Interactive JS Game</p>
-                    <p class="game-tip">The bugs get faster the more you squash. 15 seconds. Go!</p>
+                    <p style="font-size: 0.85rem; margin-bottom: 10px;">The bugs get faster the more you squash. 15 seconds. Go!</p>
                     
                     <div id="game-container" class="game-area">
-                        <div id="start-screen" class="screen-flex start-screen">
-                            <div class="game-tabs" role="tablist" aria-label="Debug Defender start options">
-                                <button id="profile-tab" role="tab" aria-controls="profile-panel" aria-selected="true" tabindex="0" class="tab-btn active-tab">Profile</button>
-                                <button id="leaderboard-tab" role="tab" aria-controls="leaderboard-panel" aria-selected="false" tabindex="-1" class="tab-btn">Leaderboard</button>
-                            </div>
-
-                            <div id="profile-panel" class="tab-panel active-panel" role="tabpanel" aria-labelledby="profile-tab">
-                                <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off" aria-label="Player nickname">
-                                <p class="personal-best">Personal Best: <span id="personal-best">0</span></p>
-                                <button id="start-game-btn" class="game-btn start-game-btn">Start Debugging</button>
-                            </div>
-
-                            <div id="leaderboard-panel" class="tab-panel" role="tabpanel" aria-labelledby="leaderboard-tab" hidden>
-                                <div class="leaderboard-container">
-                                    <h4>Global Top Debuggers</h4>
-                                    <ol id="start-leaderboard" class="leaderboard-list"></ol>
-                                </div>
+                        <div id="start-screen" class="screen-flex">
+                            <button id="start-game-btn" class="game-btn" style="margin-bottom: 10px;">Start Debugging</button>
+                            <div class="leaderboard-container">
+                                <h4>Global Top Debuggers</h4>
+                                <ol id="start-leaderboard" class="leaderboard-list"></ol>
                             </div>
                         </div>
                         
-                        <div id="play-screen" class="game-play-screen screen-hidden">
+                        <div id="play-screen" style="display: none;">
                             <div class="game-header">
-                                <span>Score: <span id="score">0</span> <span class="best-score">(Best: <span id="current-best">0</span>)</span></span>
+                                <span>Score: <span id="score">0</span> <span style="font-size:0.7rem; opacity:0.7">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
                             </div>
                             <div id="bug" class="bug" draggable="false">🐛</div>
                         </div>
                         
-                        <div id="end-screen" class="screen-flex game-end-screen screen-hidden">
-                            <h3 id="end-message" class="game-end-title">Time's Up!</h3>
-                            <p class="game-end-summary">Bugs Squashed: <span id="final-score">0</span></p>
+                        <div id="end-screen" class="screen-flex" style="display: none;">
+                            <h3 id="end-message" style="margin-bottom: 5px; color: var(--accent-color);">Time's Up!</h3>
+                            <p style="font-weight: 600; margin-bottom: 10px;">Bugs Squashed: <span id="final-score">0</span></p>
+                            
+                            <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off">
+                            
                             <button id="restart-game-btn" class="game-btn">Save & Play Again</button>
                         </div>
                     </div>
@@ -138,80 +127,45 @@
 
         <section id="contact" class="fade-section">
             <h2>Contact Me</h2>
-            <form id="contact-form" class="project-card contact-form">
-                <div class="field-group">
-                    <label for="user-name">Name</label>
-                    <input type="text" id="user-name" class="name-input contact-input" required placeholder="Your name">
+            <form id="contact-form" class="project-card" style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="user-name" style="font-size: 0.9rem; font-weight: 600;">Name</label>
+                    <input type="text" id="user-name" class="name-input" style="width: 100%; text-align: left;" required placeholder="Your name">
                 </div>
-                <div class="field-group">
-                    <label for="user-email">Email</label>
-                    <input type="email" id="user-email" class="name-input contact-input" required placeholder="your.email@example.com">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="user-email" style="font-size: 0.9rem; font-weight: 600;">Email</label>
+                    <input type="email" id="user-email" class="name-input" style="width: 100%; text-align: left;" required placeholder="your.email@example.com">
                 </div>
-                <div class="field-group">
-                    <label for="user-message">Message</label>
-                    <textarea id="user-message" class="name-input contact-input contact-textarea" required placeholder="Type your message here..."></textarea>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="user-message" style="font-size: 0.9rem; font-weight: 600;">Message</label>
+                    <textarea id="user-message" class="name-input" style="width: 100%; text-align: left; min-height: 100px; resize: vertical;" required placeholder="Type your message here..."></textarea>
                 </div>
-                <button type="submit" id="submit-btn" class="game-btn submit-btn">Send Message</button>
-                <p id="form-status" class="form-status-hidden"></p>
+                <button type="submit" id="submit-btn" class="game-btn" style="align-self: flex-start;">Send Message</button>
+                <p id="form-status" style="font-size: 0.9rem; font-weight: 600; display: none;"></p>
             </form>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 | Built with Git, HTML/CSS, & Deployment CI/CD</p>
+        <p>&copy; 2026 | Built with Git, HTML/CSS, & Vercel Hosting</p>
     </footer>
 
     <script>
-        // --- Shared Supabase Instance Instantiation (Defensive Parsing) ---
-        try {
-            const DB_URL = (window.env && window.env.SUPABASE_URL) || "https://dummy.supabase.co";
-            const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "dummy_key";
-            if (typeof supabase !== 'undefined' && supabase.createClient) {
-                window.supabaseInstance = supabase.createClient(DB_URL, DB_KEY);
-            } else {
-                console.warn('Supabase SDK unavailable; continuing without DB integration.');
-                window.supabaseInstance = null;
-            }
-        } catch (err) {
-            console.error('Supabase initialization failed:', err);
-            window.supabaseInstance = null;
-        }
+        // --- Shared Supabase Instance Instantiation ---
+        const DB_URL = (window.env && window.env.SUPABASE_URL) || "YOUR_LOCAL_FALLBACK_URL";
+        const DB_KEY = (window.env && window.env.SUPABASE_ANON_KEY) || "YOUR_LOCAL_FALLBACK_KEY";
+        const globalSupabase = supabase.createClient(DB_URL, DB_KEY);
+        window.supabaseInstance = globalSupabase;
 
-        // --- EmailJS Setup Initialization (Defensive Parsing) ---
-        try {
-            const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "dummy_key";
-            if (typeof emailjs !== 'undefined' && emailjs.init) {
-                emailjs.init({ publicKey: EJS_PUBLIC_KEY });
-            } else {
-                console.warn('EmailJS SDK unavailable; skipping email init.');
-            }
-        } catch (err) {
-            console.error('EmailJS initialization failed:', err);
-        }
+        // --- EmailJS Setup Initialization ---
+        const EJS_PUBLIC_KEY = (window.env && window.env.EMAILJS_PUBLIC_KEY) || "YOUR_LOCAL_EMAILJS_PUBLIC_KEY";
+        emailjs.init({ publicKey: EJS_PUBLIC_KEY });
 
         // --- Theme Toggle Logic ---
         const toggleBtn = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
         const currentTheme = document.documentElement.getAttribute('data-theme');
-        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         updateIcon(currentTheme);
-
-        const rippleTargets = document.querySelectorAll('.theme-btn, .game-btn, .project-card, .skill-category, .tab-btn, .social-icon, .nav-links a, .contact-form');
-        rippleTargets.forEach((target) => {
-            target.classList.add('ripple-target');
-            if (reducedMotionQuery.matches) return;
-
-            target.addEventListener('pointerdown', (event) => {
-                const rect = target.getBoundingClientRect();
-                const ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                ripple.style.left = `${event.clientX - rect.left}px`;
-                ripple.style.top = `${event.clientY - rect.top}px`;
-                target.appendChild(ripple);
-                requestAnimationFrame(() => ripple.classList.add('is-visible'));
-                ripple.addEventListener('animationend', () => ripple.remove());
-            });
-        });
 
         toggleBtn.addEventListener('click', () => {
             let theme = document.documentElement.getAttribute('data-theme');
@@ -241,35 +195,26 @@
 
         document.querySelectorAll('.fade-section').forEach(section => { observer.observe(section); });
 
-        // --- Hardware-Accelerated Typewriter Sequence ---
-        (function runTypewriterSafe() {
-            const nameEl = document.getElementById('my-name');
-            if (!nameEl) return;
-            const targetText = "Hi! I'm Emmanuel John Bernal";
-            let charIndex = 0;
+        // --- Hardware-Accelerated Typewriter Sequence (Glitch Logic Removed) ---
+        const nameEl = document.getElementById('my-name');
+        const targetText = "Hi! I'm Emmanuel John Bernal";
+        let charIndex = 0;
 
-            function renderTypewriter() {
-                if (charIndex <= targetText.length) {
-                    nameEl.textContent = targetText.substring(0, charIndex);
-                    charIndex++;
-                    setTimeout(renderTypewriter, 70);
-                } else {
-                    setTimeout(() => nameEl.classList.add('typing-complete'), 2500);
-                }
+        function renderTypewriter() {
+            if (charIndex <= targetText.length) {
+                nameEl.textContent = targetText.substring(0, charIndex);
+                charIndex++;
+                setTimeout(renderTypewriter, 70); 
+            } else {
+                setTimeout(() => nameEl.classList.add('typing-complete'), 2500); 
             }
-            setTimeout(renderTypewriter, 400);
-        })();
+        }
+        setTimeout(renderTypewriter, 400);
 
-        // --- Secure Contact Form Handling ---
+        // --- Contact Form Handling (Supabase Cloud Sync + EmailJS Alert Integration) ---
         const contactForm = document.getElementById('contact-form');
         const formStatus = document.getElementById('form-status');
         const submitBtn = document.getElementById('submit-btn');
-
-        function sanitizeInput(str) {
-            return str.trim().replace(/[&<>"']/g, (m) => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'
-            })[m]);
-        }
 
         if (contactForm) {
             contactForm.addEventListener('submit', async (e) => {
@@ -278,49 +223,34 @@
                 submitBtn.textContent = 'Sending...';
                 formStatus.style.display = 'none';
 
-                const inputName = sanitizeInput(document.getElementById('user-name').value);
-                const inputEmail = sanitizeInput(document.getElementById('user-email').value);
-                const inputMessage = sanitizeInput(document.getElementById('user-message').value);
-
-                if (!inputName || !inputEmail || !inputMessage) {
-                    formStatus.textContent = "❌ All fields must contain valid text values.";
-                    formStatus.style.color = "#ff4d4d";
-                    formStatus.style.display = "block";
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Send Message';
-                    return;
-                }
+                const inputName = document.getElementById('user-name').value;
+                const inputEmail = document.getElementById('user-email').value;
+                const inputMessage = document.getElementById('user-message').value;
 
                 try {
-                    let supabasePromise = Promise.resolve({ data: null, error: null });
-                    if (window.supabaseInstance && window.env?.SUPABASE_URL && window.env.SUPABASE_URL !== 'https://your-fallback-development-url.supabase.co') {
-                        supabasePromise = window.supabaseInstance
-                            .from('contact_submissions')
-                            .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
-                    }
+                    const supabasePromise = globalSupabase
+                        .from('contact_submissions')
+                        .insert([{ name: inputName, email: inputEmail, message: inputMessage }]);
 
-                    const ejsService = window.env?.EMAILJS_SERVICE_ID;
-                    const ejsTemplate = window.env?.EMAILJS_TEMPLATE_ID;
+                    const ejsService = (window.env && window.env.EMAILJS_SERVICE_ID) || "YOUR_LOCAL_SERVICE_ID";
+                    const ejsTemplate = (window.env && window.env.EMAILJS_TEMPLATE_ID) || "YOUR_LOCAL_TEMPLATE_ID";
+                    
+                    const emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
+                        name: inputName,
+                        email: inputEmail,
+                        message: inputMessage
+                    });
 
-                    let emailjsPromise = Promise.resolve({ status: 'skipped' });
-                    if (typeof emailjs !== 'undefined' && emailjs.send && window.env?.EMAILJS_PUBLIC_KEY) {
-                        emailjsPromise = emailjs.send(ejsService, ejsTemplate, {
-                            name: inputName,
-                            email: inputEmail,
-                            message: inputMessage
-                        });
-                    }
+                    const [supabaseResult, emailjsResult] = await Promise.all([supabasePromise, emailjsPromise]);
 
-                    const [supabaseResult] = await Promise.all([supabasePromise, emailjsPromise]);
+                    if (supabaseResult.error) throw supabaseResult.error;
 
-                    if (supabaseResult && supabaseResult.error) throw supabaseResult.error;
-
-                    formStatus.textContent = "🚀 Message logged and sent successfully!";
+                    formStatus.textContent = "🚀 Message logged to database & emailed successfully!";
                     formStatus.style.color = "var(--accent-color)";
                     formStatus.style.display = "block";
                     contactForm.reset();
                 } catch (err) {
-                    console.error('Submission Processing Failure:', err && (err.message || err));
+                    console.error('Submission Processing Failure:', err.message || err);
                     formStatus.textContent = "❌ Submission failed. Verify your network or dashboard credentials.";
                     formStatus.style.color = "#ff4d4d";
                     formStatus.style.display = "block";
