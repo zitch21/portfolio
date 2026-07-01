@@ -26,6 +26,9 @@
     <script src="game.js" defer></script>
 </head>
 <body>
+    <div class="caustics" aria-hidden="true"></div>
+    <div class="bubbles" id="bubbles-layer" aria-hidden="true"></div>
+
     <nav class="navbar">
         <div class="nav-container">
             <a href="#top" class="nav-brand">EJ.</a>
@@ -85,31 +88,31 @@
                     <p>A personal website I built for my Web Programming class. It uses basic HTML, CSS, and JavaScript to share a bit about myself and display the coding projects I've been working on.</p>
                 </div>
                 
-                <div class="project-card" style="display: flex; flex-direction: column;">
+                <div class="project-card game-widget">
                     <h3>Debug Defender: Pro</h3>
                     <p class="tag">Interactive JS Game</p>
-                    <p style="font-size: 0.85rem; margin-bottom: 10px;">The bugs get faster the more you squash. 15 seconds. Go!</p>
+                    <p class="game-tip">The bugs get faster the more you squash. 15 seconds. Go!</p>
                     
                     <div id="game-container" class="game-area">
                         <div id="start-screen" class="screen-flex">
-                            <button id="start-game-btn" class="game-btn" style="margin-bottom: 10px;">Start Debugging</button>
+                            <button id="start-game-btn" class="game-btn start-game-btn">Start Debugging</button>
                             <div class="leaderboard-container">
                                 <h4>Global Top Debuggers</h4>
                                 <ol id="start-leaderboard" class="leaderboard-list"></ol>
                             </div>
                         </div>
                         
-                        <div id="play-screen" style="display: none;">
+                        <div id="play-screen" class="game-play-screen">
                             <div class="game-header">
-                                <span>Score: <span id="score">0</span> <span style="font-size:0.7rem; opacity:0.7">(Best: <span id="current-best">0</span>)</span></span>
+                                <span>Score: <span id="score">0</span> <span class="best-score">(Best: <span id="current-best">0</span>)</span></span>
                                 <span>Time: <span id="time">15</span>s</span>
                             </div>
                             <div id="bug" class="bug" draggable="false">🐛</div>
                         </div>
                         
-                        <div id="end-screen" class="screen-flex" style="display: none;">
-                            <h3 id="end-message" style="margin-bottom: 5px; color: var(--accent-color);">Time's Up!</h3>
-                            <p style="font-weight: 600; margin-bottom: 10px;">Bugs Squashed: <span id="final-score">0</span></p>
+                        <div id="end-screen" class="screen-flex game-end-screen">
+                            <h3 id="end-message" class="game-end-title">Time's Up!</h3>
+                            <p class="game-end-summary">Bugs Squashed: <span id="final-score">0</span></p>
                             
                             <input type="text" id="player-name" class="name-input" placeholder="Enter Nickname" maxlength="10" autocomplete="off">
                             
@@ -136,21 +139,21 @@
 
         <section id="contact" class="fade-section">
             <h2>Contact Me</h2>
-            <form id="contact-form" class="project-card" style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label for="user-name" style="font-size: 0.9rem; font-weight: 600;">Name</label>
-                    <input type="text" id="user-name" class="name-input" style="width: 100%; text-align: left;" required placeholder="Your name">
+            <form id="contact-form" class="project-card contact-form">
+                <div class="field-group">
+                    <label for="user-name">Name</label>
+                    <input type="text" id="user-name" class="name-input contact-input" required placeholder="Your name">
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label for="user-email" style="font-size: 0.9rem; font-weight: 600;">Email</label>
-                    <input type="email" id="user-email" class="name-input" style="width: 100%; text-align: left;" required placeholder="your.email@example.com">
+                <div class="field-group">
+                    <label for="user-email">Email</label>
+                    <input type="email" id="user-email" class="name-input contact-input" required placeholder="your.email@example.com">
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label for="user-message" style="font-size: 0.9rem; font-weight: 600;">Message</label>
-                    <textarea id="user-message" class="name-input" style="width: 100%; text-align: left; min-height: 100px; resize: vertical;" required placeholder="Type your message here..."></textarea>
+                <div class="field-group">
+                    <label for="user-message">Message</label>
+                    <textarea id="user-message" class="name-input contact-input contact-textarea" required placeholder="Type your message here..."></textarea>
                 </div>
-                <button type="submit" id="submit-btn" class="game-btn" style="align-self: flex-start;">Send Message</button>
-                <p id="form-status" style="font-size: 0.9rem; font-weight: 600; display: none;"></p>
+                <button type="submit" id="submit-btn" class="game-btn submit-btn">Send Message</button>
+                <p id="form-status" class="form-status-hidden"></p>
             </form>
         </section>
     </main>
@@ -160,6 +163,33 @@
     </footer>
 
     <script>
+        const bubblesLayer = document.getElementById('bubbles-layer');
+        if (bubblesLayer) {
+            const bubbleCount = window.innerWidth < 768 ? 7 : 10;
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('span');
+                bubble.className = 'bubble';
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.setProperty('--drift', `${(Math.random() * 24 - 12).toFixed(2)}vw`);
+                bubble.style.animationDelay = `${-Math.random() * 16}s`;
+                bubble.style.animationDuration = `${12 + Math.random() * 8}s`;
+                fragment.appendChild(bubble);
+            }
+
+            bubblesLayer.appendChild(fragment);
+
+            if ('IntersectionObserver' in window) {
+                const bubbleObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+                }, { threshold: 0.1 });
+                bubbleObserver.observe(bubblesLayer);
+            } else {
+                bubblesLayer.classList.add('is-visible');
+            }
+        }
+
         // --- Shared Supabase Instance Instantiation (defensive) ---
         let globalSupabase = null;
         try {
