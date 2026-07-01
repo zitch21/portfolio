@@ -28,12 +28,25 @@ const gameArea = document.getElementById('game-container');
 const startLeaderboard = document.getElementById('start-leaderboard');
 const nameInput = document.getElementById('player-name');
 
+// --- Tab Navigation Handlers ---
+const tabPersonalBtn = document.getElementById('tab-personal-btn');
+const tabLeaderboardBtn = document.getElementById('tab-leaderboard-btn');
+const panelPersonal = document.getElementById('panel-personal');
+const panelLeaderboard = document.getElementById('panel-leaderboard');
+const statsName = document.getElementById('stats-name');
+const statsScore = document.getElementById('stats-score');
+
 let score = 0;
 let timeLeft = 15;
 let gameInterval;
 let bugTimeout; 
 let isPlaying = false;
 let isSaving = false; 
+
+function updatePersonalStatsUI() {
+    if (statsName) statsName.textContent = localStorage.getItem('player-nickname') || 'Guest';
+    if (statsScore) statsScore.textContent = localStorage.getItem('personal-best') || '0';
+}
 
 async function updateLeaderboardUI() {
     if (!startLeaderboard) return;
@@ -74,6 +87,14 @@ async function updateLeaderboardUI() {
 async function saveScore(newScore, playerName) {
     if (newScore === 0) return;
     const finalName = playerName.trim() === "" ? "Player" : playerName.trim();
+    
+    // Sync to persistent local user stats
+    localStorage.setItem('player-nickname', finalName);
+    const cachedBest = parseInt(localStorage.getItem('personal-best') || 0);
+    if (newScore > cachedBest) {
+        localStorage.setItem('personal-best', newScore);
+    }
+    updatePersonalStatsUI();
     
     try {
         const { error } = await gameSupabase
@@ -191,5 +212,24 @@ if (restartBtn) {
     });
 }
 
-// Automatically populate scores on initialization
+// --- Interactive Navigation Tabs Action Handlers ---
+if (tabPersonalBtn && tabLeaderboardBtn && panelPersonal && panelLeaderboard) {
+    tabPersonalBtn.addEventListener('click', () => {
+        tabPersonalBtn.classList.add('active-tab');
+        tabLeaderboardBtn.classList.remove('active-tab');
+        panelPersonal.style.display = 'flex';
+        panelLeaderboard.style.display = 'none';
+    });
+
+    tabLeaderboardBtn.addEventListener('click', () => {
+        tabLeaderboardBtn.classList.add('active-tab');
+        tabPersonalBtn.classList.remove('active-tab');
+        panelPersonal.style.display = 'none';
+        panelLeaderboard.style.display = 'flex';
+        updateLeaderboardUI();
+    });
+}
+
+// Automatically populate stats and scores on initialization
+updatePersonalStatsUI();
 updateLeaderboardUI();
